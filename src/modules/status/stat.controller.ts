@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Body, Get, Post } from '@nestjs/common';
 
 import { StatusService } from './stat.service';
 
@@ -14,5 +14,12 @@ export class StatusController {
   @Get('/')
   async main(): Promise<string> {
     return this.service.main();
+  }
+
+  @Post('/withdrawal')
+  async withdrawal(_, @Body() { body }: any): Promise<string> {
+    console.log('body', body)
+
+    return await this.service.withdrawal(JSON.parse(body))
   }
 }

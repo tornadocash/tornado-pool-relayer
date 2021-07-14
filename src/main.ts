@@ -5,11 +5,14 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const configService = app.get(ConfigService);
-  await app.listen(configService.get('port'));
+  try {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
+
+    const configService = app.get(ConfigService);
+    await app.listen(configService.get('port'));
+  } catch (err) {
+    console.log('err', err.message)
+  }
 }
 
 bootstrap()
-  .then((result) => console.log('result', result))
-  .catch((e) => console.log('error', e.message));

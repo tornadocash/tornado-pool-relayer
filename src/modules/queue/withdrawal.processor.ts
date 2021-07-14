@@ -9,6 +9,7 @@ import { InjectQueue, Process, Processor } from '@nestjs/bull';
 import { toWei } from '@/utilities';
 import { getGasPrice } from '@/services';
 import { getTornadoPool } from '@/contracts';
+import txMangerConfig from '@/config/txManager.config';
 
 import { BaseProcessor } from './base.processor';
 
@@ -18,7 +19,6 @@ export interface Withdrawal {
   amount: string;
   txHash: string;
   status: string;
-  contract: string;
   confirmations: number;
 }
 
@@ -41,7 +41,7 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
 
       const { args, amount } = job.data;
 
-      await this.checkFee({ fee: args[4], amount });
+      await this.checkFee({ fee: args[6], amount });
       await this.submitTx(job);
     } catch (err) {
       await job.moveToFailed(err, true);
@@ -49,7 +49,7 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   }
 
   async submitTx(job: Job<Withdrawal>) {
-    const txManager = new TxManager(this.configService.get('txManager'));
+    const txManager = new TxManager(txMangerConfig());
 
     const prepareTx = await this.prepareTransaction(job.data);
     const tx = await txManager.createTx(prepareTx);
@@ -89,7 +89,7 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   }
 
   async prepareTransaction({ proof, args, amount }) {
-    const contract = getTornadoPool(1);
+    const contract = getTornadoPool(5);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -98,34 +98,31 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
       ...args,
     ]);
 
-    const gasLimit = this.configService.get<number>('gasLimits');
+    const gasLimit = this.configService.get<number>('gasLimit');
 
     return {
       data,
       gasLimit,
-      value: amount,
+      value: BigNumber.from(0)._hex,
       to: contract.address,
     };
   }
 
   async checkFee({ fee, amount }) {
-    const gasLimit = this.configService.get<number>('gasLimits');
+    const gasLimit = this.configService.get<number>('gasLimit');
 
-    const { fast } = await getGasPrice(1);
+    const { fast } = await getGasPrice(5);
 
     const expense = BigNumber.from(toWei(fast.toString(), 'gwei')).mul(
       gasLimit,
     );
 
     const serviceFee = this.configService.get<number>('fee');
-
-    const feePercent = BigNumber.from(toWei(amount))
-      .mul(toWei(serviceFee.toString()))
-      .div(100);
+    const feePercent = BigNumber.from(amount).mul(serviceFee * 1e10).div(100 * 1e10)
 
     const desiredFee = expense.add(feePercent);
 
-    if (fee.lt(desiredFee)) {
+    if (BigNumber.from(fee).lt(desiredFee)) {
       throw new Error(
         'Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.',
       );
