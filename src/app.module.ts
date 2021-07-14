@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { baseConfig } from './config';
-import { QueueModule } from './modules';
-import { CommunicationsModule } from './communication';
+import { baseConfig } from '@/config';
+import { QueueModule, StatusModule } from '@/modules';
 
 @Module({
   imports: [
@@ -12,7 +11,7 @@ import { CommunicationsModule } from './communication';
       isGlobal: true,
     }),
     QueueModule,
-    CommunicationsModule,
+    StatusModule,
   ],
 })
 export class AppModule {}

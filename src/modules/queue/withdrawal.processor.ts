@@ -1,17 +1,21 @@
-import { InjectQueue, Process, Processor } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Job, Queue } from 'bull';
 import { BigNumber } from 'ethers';
 import { TxManager } from 'tx-manager';
 
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { InjectQueue, Process, Processor } from '@nestjs/bull';
+
+import { toWei } from '@/utilities';
 import { getGasPrice } from '@/services';
-import { toChecksumAddress, toWei } from '@/utilities';
+import { getTornadoPool } from '@/contracts';
 
 import { BaseProcessor } from './base.processor';
 
 export interface Withdrawal {
   args: string[];
+  proof: string;
+  amount: string;
   txHash: string;
   status: string;
   contract: string;
@@ -19,11 +23,11 @@ export interface Withdrawal {
 }
 
 @Injectable()
-@Processor('job')
+@Processor('withdrawal')
 export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   constructor(
-    private configService: ConfigService,
     @InjectQueue('withdrawal') public withdrawalQueue: Queue,
+    private configService: ConfigService,
   ) {
     super();
     this.queueName = 'withdrawal';
@@ -35,22 +39,20 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
     try {
       await job.isActive();
 
-      const { args, contract } = job.data;
+      const { args, amount } = job.data;
 
-      await this.checkFee({ contract, fee: args[4] });
+      await this.checkFee({ fee: args[4], amount });
+      await this.submitTx(job);
     } catch (err) {
       await job.moveToFailed(err, true);
     }
   }
 
   async submitTx(job: Job<Withdrawal>) {
-    const txManager = new TxManager({
-      privateKey: '',
-      rpcUrl: '',
-      config: { CONFIRMATIONS: '', MAX_GAS_PRICE: '', THROW_ON_REVERT: false },
-    });
+    const txManager = new TxManager(this.configService.get('txManager'));
 
-    const tx = await txManager.createTx(await getTxObject(job));
+    const prepareTx = await this.prepareTransaction(job.data);
+    const tx = await txManager.createTx(prepareTx);
 
     try {
       const receipt = await tx
@@ -86,27 +88,27 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
     }
   }
 
-  getInstance(address) {
-    const id = this.configService.get('network.id');
-    const instances = this.configService.get(`instances.${id}`);
+  async prepareTransaction({ proof, args, amount }) {
+    const contract = getTornadoPool(1);
 
-    for (const currency of Object.keys(instances)) {
-      const { instanceAddress, decimals } = instances[currency];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const data = contract.interface.encodeFunctionData('transaction', [
+      proof,
+      ...args,
+    ]);
 
-      for (const amount of Object.keys(instanceAddress)) {
-        const contract = instances[currency].instanceAddress[amount];
+    const gasLimit = this.configService.get<number>('gasLimits');
 
-        if (toChecksumAddress(contract) === toChecksumAddress(address)) {
-          return { currency, amount, decimals };
-        }
-      }
-    }
-    return null;
+    return {
+      data,
+      gasLimit,
+      value: amount,
+      to: contract.address,
+    };
   }
 
-  async checkFee({ fee, contract }) {
-    const { amount } = this.getInstance(contract);
-
+  async checkFee({ fee, amount }) {
     const gasLimit = this.configService.get<number>('gasLimits');
 
     const { fast } = await getGasPrice(1);

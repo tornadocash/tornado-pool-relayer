@@ -1,20 +1,14 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 
-import config from 'config';
-import { AdvancedSettings } from 'bull';
-
-import { RedisOptions } from 'ioredis';
 import { WithdrawalProcessor } from './withdrawal.processor';
 
-const redis = config.get<RedisOptions>('bull.redis');
-const settings = config.get<AdvancedSettings>('bull.settings');
+import bullConfig from '@/config/bull.config';
 
 @Module({
   imports: [
     BullModule.registerQueue({
-      redis,
-      settings,
+      ...bullConfig(),
       name: 'withdrawal',
     }),
   ],
