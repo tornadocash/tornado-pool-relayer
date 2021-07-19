@@ -3,7 +3,7 @@ import { ChainId } from '@/types';
 export const CONTRACT_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x8Bfac9EF3d73cE08C7CEC339C0fE3B2e57814c1E',
   [ChainId.GOERLI]: '0x20a2D506cf52453D681F9E8E814A3437c6242B9e',
-  [ChainId.OPTIMISM]: '0xc436071dE853A4421c57ddD0CDDC116C735aa8b5',
+  [ChainId.OPTIMISM]: '0x1Ed4dcDB4b78985008199f451E88C6448C4EDd94',
 };
 
 export const RPC_LIST: { [chainId in ChainId]: string } = {

@@ -7,11 +7,11 @@ import { ConfigService } from '@nestjs/config';
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
 
 import { toWei } from '@/utilities';
-import { getGasPrice } from '@/services';
-import { getTornadoPool } from '@/contracts';
+import { GasPriceService, ProviderService } from '@/services';
 import txMangerConfig from '@/config/txManager.config';
 
 import { BaseProcessor } from './base.processor';
+import { ChainId } from '@/types';
 
 export interface Withdrawal {
   args: string[];
@@ -27,6 +27,8 @@ export interface Withdrawal {
 export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   constructor(
     @InjectQueue('withdrawal') public withdrawalQueue: Queue,
+    private gasPriceService: GasPriceService,
+    private providerService: ProviderService,
     private configService: ConfigService,
   ) {
     super();
@@ -49,12 +51,12 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   }
 
   async submitTx(job: Job<Withdrawal>) {
-    const txManager = new TxManager(txMangerConfig());
-
-    const prepareTx = await this.prepareTransaction(job.data);
-    const tx = await txManager.createTx(prepareTx);
-
     try {
+      const txManager = new TxManager(txMangerConfig());
+
+      const prepareTx = await this.prepareTransaction(job.data);
+      const tx = await txManager.createTx(prepareTx);
+
       const receipt = await tx
         .send()
         .on('transactionHash', async (txHash: string) => {
@@ -88,44 +90,52 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
     }
   }
 
-  async prepareTransaction({ proof, args, amount }) {
-    const contract = getTornadoPool(5);
+  async prepareTransaction({ proof, args }) {
+    const chainId = this.configService.get<number>('chainId');
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    const contract = this.providerService.getTornadoPool();
+
     // @ts-ignore
-    const data = contract.interface.encodeFunctionData('transaction', [
-      proof,
-      ...args,
-    ]);
+    const data = contract.interface.encodeFunctionData('transaction', [proof, ...args]);
 
-    const gasLimit = this.configService.get<number>('gasLimit');
+    let gasLimit = this.configService.get<BigNumber>('gasLimit');
+
+    // need because optimism has dynamic gas limit
+    if (chainId === ChainId.OPTIMISM) {
+      // @ts-ignore
+      gasLimit = await contract.estimateGas.transaction(proof, ...args, {
+        value: BigNumber.from(0)._hex,
+        from: '0x1a5245ea5210C3B57B7Cfdf965990e63534A7b52',
+        gasPrice: toWei('0.015', 'gwei'),
+      });
+    }
+
+    const { fast } = await this.gasPriceService.getGasPrice();
 
     return {
       data,
       gasLimit,
-      value: BigNumber.from(0)._hex,
       to: contract.address,
+      gasPrice: fast.toString(),
+      value: BigNumber.from(0)._hex,
     };
   }
 
   async checkFee({ fee, amount }) {
-    const gasLimit = this.configService.get<number>('gasLimit');
+    const { gasLimit, serviceFee } = this.configService.get('');
 
-    const { fast } = await getGasPrice(5);
+    const { fast } = await this.gasPriceService.getGasPrice();
 
-    const expense = BigNumber.from(toWei(fast.toString(), 'gwei')).mul(
-      gasLimit,
-    );
+    const expense = BigNumber.from(toWei(fast.toString(), 'gwei')).mul(gasLimit);
 
-    const serviceFee = this.configService.get<number>('fee');
-    const feePercent = BigNumber.from(amount).mul(serviceFee * 1e10).div(100 * 1e10)
+    const feePercent = BigNumber.from(amount)
+      .mul(serviceFee * 1e10)
+      .div(100 * 1e10);
 
     const desiredFee = expense.add(feePercent);
 
     if (BigNumber.from(fee).lt(desiredFee)) {
-      throw new Error(
-        'Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.',
-      );
+      throw new Error('Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.');
     }
   }
 }

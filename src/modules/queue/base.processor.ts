@@ -10,7 +10,6 @@ import {
 } from '@nestjs/bull';
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Job, Queue } from 'bull';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 @Processor()
@@ -54,15 +53,9 @@ export class BaseProcessor<T = object> implements OnModuleDestroy {
     return this.updateTask(job);
   }
 
-  async updateTask(job: Job<T>) {
+  private async updateTask(job: Job<T>) {
     const currentJob = await this.queue.getJob(job.id);
     await currentJob.update(job.data);
-  }
-
-  private async createTask({ request }) {
-    const id = uuid();
-    await this.queue.add({ ...request, id });
-    return id;
   }
 
   async onModuleDestroy() {

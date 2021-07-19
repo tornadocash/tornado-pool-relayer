@@ -1,4 +1,4 @@
-export class CreateStatusDto {
+export class CreateApiDto {
   error: boolean;
   status: string;
 }

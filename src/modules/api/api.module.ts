@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { StatusService } from './stat.service';
-import { StatusController } from './stat.controller';
+import { ApiService } from './api.service';
+import { ApiController } from './api.controller';
 
 import { QueueModule } from '@/modules';
 
 @Module({
   imports: [ConfigModule, QueueModule],
-  providers: [StatusService],
-  controllers: [StatusController],
+  providers: [ApiService],
+  controllers: [ApiController],
   exports: [],
 })
-export class StatusModule {}
+export class ApiModule {}

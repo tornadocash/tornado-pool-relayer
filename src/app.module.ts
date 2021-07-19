@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { baseConfig } from '@/config';
-import { QueueModule, StatusModule } from '@/modules';
+import { QueueModule, ApiModule } from '@/modules';
 
 @Module({
   imports: [
@@ -10,8 +10,8 @@ import { QueueModule, StatusModule } from '@/modules';
       load: [baseConfig],
       isGlobal: true,
     }),
+    ApiModule,
     QueueModule,
-    StatusModule,
   ],
 })
 export class AppModule {}

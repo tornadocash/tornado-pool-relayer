@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('bull', () => ({
+  name: 'withdrawal',
   redis: {
     host: 'localhost',
     port: 6379,
