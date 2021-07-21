@@ -5,10 +5,11 @@ import { ApiService } from './api.service';
 import { ApiController } from './api.controller';
 
 import { QueueModule } from '@/modules';
+import { ProviderService } from '@/services';
 
 @Module({
   imports: [ConfigModule, QueueModule],
-  providers: [ApiService],
+  providers: [ApiService, ProviderService],
   controllers: [ApiController],
   exports: [],
 })

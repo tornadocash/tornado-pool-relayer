@@ -1,23 +1,13 @@
 import { BigNumber, utils, BigNumberish } from 'ethers';
-import {
-  toChecksumAddress as checksumAddress,
-  isAddress as checkAddress,
-} from 'web3-utils';
 
 import { numbers } from '@/constants';
 
-// eslint-disable-next-line
-export function isAddress(value: any): boolean {
-  try {
-    return checkAddress(value);
-  } catch {
-    return false;
-  }
+export function isAddress(value: string): boolean {
+  return utils.isAddress(value);
 }
 
-// eslint-disable-next-line
-export function toChecksumAddress(value: any): string {
-  return checksumAddress(value);
+export function toChecksumAddress(value: string): string {
+  return utils.getAddress(value);
 }
 
 export function toWei(value: string, uintName = 'wei') {

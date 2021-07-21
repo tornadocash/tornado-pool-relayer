@@ -8,13 +8,11 @@ import { TornadoPool__factory as TornadoPoolFactory } from '@/artifacts';
 @Injectable()
 export class ProviderService {
   private readonly chainId: number;
+  public provider: ethers.providers.JsonRpcProvider;
 
   constructor(private configService: ConfigService) {
-    this.chainId = this.configService.get<number>('chainId');
-  }
-
-  getProvider() {
-    return new ethers.providers.JsonRpcProvider(RPC_LIST[this.chainId]);
+    this.chainId = this.configService.get<number>('base.chainId');
+    this.provider = new ethers.providers.JsonRpcProvider(RPC_LIST[this.chainId]);
   }
 
   getProviderWithSigner() {
@@ -23,5 +21,19 @@ export class ProviderService {
 
   getTornadoPool() {
     return TornadoPoolFactory.connect(CONTRACT_NETWORKS[this.chainId], this.getProviderWithSigner());
+  }
+
+  async checkSenderBalance() {
+    try {
+      const balance = await this.getBalance(this.configService.get<string>('base.address'));
+
+      return balance.gt(ethers.utils.parseEther(this.configService.get('base.minimumBalance')));
+    } catch {
+      return false;
+    }
+  }
+
+  async getBalance(address: string) {
+    return await this.provider.getBalance(address);
   }
 }

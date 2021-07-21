@@ -2,18 +2,32 @@ import { Queue, Job } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 
+import { ProviderService } from '@/services';
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 class ApiService {
-  constructor(@InjectQueue('withdrawal') private withdrawalQueue: Queue) {}
+  constructor(
+    private configService: ConfigService,
+    private providerService: ProviderService,
+    @InjectQueue('withdrawal') private withdrawalQueue: Queue,
+  ) {}
 
-  async status(): Promise<Health> {
+  async status(): Promise<Status> {
+    const { rewardAddress, version, chainId, serviceFee } = this.configService.get('base');
+
+    const health = await this.healthCheck();
+
     return {
-      status: '',
-      error: false,
+      health,
+      chainId,
+      version,
+      serviceFee,
+      rewardAddress,
     };
   }
 
-  main(): string {
+  root(): string {
     return `This is <a href=https://tornado.cash>tornado.cash</a> Relayer service. Check the <a href=/status>/status</a> for settings`;
   }
 
@@ -23,8 +37,19 @@ class ApiService {
     return String(job.id);
   }
 
-  async getJob(id: string): Promise<Job> {
+  async getJob(id: string): Promise<Job | null> {
     return await this.withdrawalQueue.getJob(id);
+  }
+
+  private async healthCheck(): Promise<Health> {
+    const status = await this.providerService.checkSenderBalance();
+
+    const minimumBalance = this.configService.get('base.minimumBalance');
+
+    return {
+      status,
+      error: status ? '' : `Not enough balance, less than ${minimumBalance} ETH`,
+    };
   }
 }
 

@@ -91,14 +91,14 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   }
 
   async prepareTransaction({ proof, args }) {
-    const chainId = this.configService.get<number>('chainId');
+    const chainId = this.configService.get('base.chainId');
 
     const contract = this.providerService.getTornadoPool();
 
     // @ts-ignore
     const data = contract.interface.encodeFunctionData('transaction', [proof, ...args]);
 
-    let gasLimit = this.configService.get<BigNumber>('gasLimit');
+    let gasLimit = this.configService.get<BigNumber>('base.gasLimit');
 
     // need because optimism has dynamic gas limit
     if (chainId === ChainId.OPTIMISM) {
@@ -122,7 +122,7 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   }
 
   async checkFee({ fee, amount }) {
-    const { gasLimit, serviceFee } = this.configService.get('');
+    const { gasLimit, serviceFee } = this.configService.get('base');
 
     const { fast } = await this.gasPriceService.getGasPrice();
 

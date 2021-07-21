@@ -13,7 +13,7 @@ export class GasPriceService {
   private readonly chainId: number;
 
   constructor(private configService: ConfigService) {
-    this.chainId = this.configService.get<number>('chainId');
+    this.chainId = this.configService.get<number>('base.chainId');
   }
 
   async getGasPrice(): Promise<GasPrice> {

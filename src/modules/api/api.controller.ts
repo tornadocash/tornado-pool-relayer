@@ -1,30 +1,42 @@
-import { Controller, Body, Param, Get, Post } from '@nestjs/common';
-import { Job } from 'bull';
+import { Controller, Body, Param, Res, Get, Post, HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
 
 import { ApiService } from './api.service';
+import { validateWithdrawRequest } from './api.validator';
 
 @Controller()
 export class ApiController {
   constructor(private readonly service: ApiService) {}
 
-  @Get('/api')
-  async status(): Promise<Health> {
+  @Get('/status')
+  async status(): Promise<Status> {
     return await this.service.status();
   }
 
   @Get('/')
-  async main(): Promise<string> {
-    return this.service.main();
+  async root(): Promise<string> {
+    return this.service.root();
   }
 
   @Get('/job/:jobId')
-  async getJob(@Param('jobId') jobId: string): Promise<Job> {
-    return await this.service.getJob(jobId);
+  async getJob(@Res() res: Response, @Param('jobId') jobId: string) {
+    const job = await this.service.getJob(jobId);
+
+    if (!job) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: "The job doesn't exist" });
+    }
+
+    return job;
   }
 
   @Post('/withdrawal')
-  async withdrawal(_, @Body() { body }: any): Promise<string> {
-    console.log('body', body);
+  async withdrawal(@Res() res: Response, @Body() { body }: any) {
+    const inputError = validateWithdrawRequest(body);
+
+    if (inputError) {
+      console.log('Invalid input:', inputError);
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: inputError });
+    }
 
     return await this.service.withdrawal(JSON.parse(body));
   }

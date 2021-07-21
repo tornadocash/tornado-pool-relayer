@@ -9,10 +9,10 @@ async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
 
     const configService = app.get(ConfigService);
-    await app.listen(configService.get('port'));
+    await app.listen(configService.get('base.port'));
   } catch (err) {
-    console.log('err', err.message)
+    console.log('err', err.message);
   }
 }
 
-bootstrap()
+bootstrap();
