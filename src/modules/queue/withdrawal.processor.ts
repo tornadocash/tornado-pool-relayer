@@ -91,7 +91,7 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
   }
 
   async prepareTransaction({ proof, args }) {
-    const chainId = this.configService.get('base.chainId');
+    const { chainId, address } = this.configService.get('base');
 
     const contract = this.providerService.getTornadoPool();
 
@@ -104,8 +104,8 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
     if (chainId === ChainId.OPTIMISM) {
       // @ts-ignore
       gasLimit = await contract.estimateGas.transaction(proof, ...args, {
+        from: address,
         value: BigNumber.from(0)._hex,
-        from: '0x1a5245ea5210C3B57B7Cfdf965990e63534A7b52',
         gasPrice: toWei('0.015', 'gwei'),
       });
     }
