@@ -29,11 +29,12 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     "currentRoot()": FunctionFragment;
     "isSpent(bytes32)": FunctionFragment;
     "nullifierHashes(bytes32)": FunctionFragment;
-    "register(bytes,bytes)": FunctionFragment;
-    "transaction(bytes,bytes32,bytes32,bytes32[],bytes32[2],uint256,uint256,uint256,tuple,bytes32)": FunctionFragment;
+    "register(tuple)": FunctionFragment;
+    "registerAndTransact(tuple,tuple,tuple)": FunctionFragment;
+    "transaction(tuple,tuple)": FunctionFragment;
     "verifier16()": FunctionFragment;
     "verifier2()": FunctionFragment;
-    "verifyProof(bytes,bytes32,bytes32,bytes32[],bytes32[2],uint256,uint256,uint256,bytes32)": FunctionFragment;
+    "verifyProof(tuple)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -63,26 +64,51 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "register",
-    values: [BytesLike, BytesLike]
+    values: [{ pubKey: BytesLike; account: BytesLike }]
   ): string;
   encodeFunctionData(
-    functionFragment: "transaction",
+    functionFragment: "registerAndTransact",
     values: [
-      BytesLike,
-      BytesLike,
-      BytesLike,
-      BytesLike[],
-      [BytesLike, BytesLike],
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
+      { pubKey: BytesLike; account: BytesLike },
+      {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       {
         recipient: string;
         relayer: string;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
+      }
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transaction",
+    values: [
+      {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
       },
-      BytesLike
+      {
+        recipient: string;
+        relayer: string;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+      }
     ]
   ): string;
   encodeFunctionData(
@@ -93,15 +119,17 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "verifyProof",
     values: [
-      BytesLike,
-      BytesLike,
-      BytesLike,
-      BytesLike[],
-      [BytesLike, BytesLike],
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike
+      {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      }
     ]
   ): string;
 
@@ -128,6 +156,10 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "registerAndTransact",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transaction",
     data: BytesLike
@@ -220,27 +252,50 @@ export class TornadoPool extends BaseContract {
     ): Promise<[boolean]>;
 
     register(
-      _pubKey: BytesLike,
-      _account: BytesLike,
+      args: { pubKey: BytesLike; account: BytesLike },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    transaction(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
+    registerAndTransact(
+      _registerArgs: { pubKey: BytesLike; account: BytesLike },
+      _proofArgs: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       _extData: {
         recipient: string;
         relayer: string;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
-      _extDataHash: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transaction(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        relayer: string;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -249,15 +304,17 @@ export class TornadoPool extends BaseContract {
     verifier2(overrides?: CallOverrides): Promise<[string]>;
 
     verifyProof(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
-      _extDataHash: BytesLike,
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
@@ -283,27 +340,50 @@ export class TornadoPool extends BaseContract {
   nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   register(
-    _pubKey: BytesLike,
-    _account: BytesLike,
+    args: { pubKey: BytesLike; account: BytesLike },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  transaction(
-    _proof: BytesLike,
-    _root: BytesLike,
-    _newRoot: BytesLike,
-    _inputNullifiers: BytesLike[],
-    _outputCommitments: [BytesLike, BytesLike],
-    _outPathIndices: BigNumberish,
-    _extAmount: BigNumberish,
-    _fee: BigNumberish,
+  registerAndTransact(
+    _registerArgs: { pubKey: BytesLike; account: BytesLike },
+    _proofArgs: {
+      proof: BytesLike;
+      root: BytesLike;
+      newRoot: BytesLike;
+      inputNullifiers: BytesLike[];
+      outputCommitments: [BytesLike, BytesLike];
+      outPathIndices: BigNumberish;
+      extAmount: BigNumberish;
+      fee: BigNumberish;
+      extDataHash: BytesLike;
+    },
     _extData: {
       recipient: string;
       relayer: string;
       encryptedOutput1: BytesLike;
       encryptedOutput2: BytesLike;
     },
-    _extDataHash: BytesLike,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transaction(
+    _args: {
+      proof: BytesLike;
+      root: BytesLike;
+      newRoot: BytesLike;
+      inputNullifiers: BytesLike[];
+      outputCommitments: [BytesLike, BytesLike];
+      outPathIndices: BigNumberish;
+      extAmount: BigNumberish;
+      fee: BigNumberish;
+      extDataHash: BytesLike;
+    },
+    _extData: {
+      recipient: string;
+      relayer: string;
+      encryptedOutput1: BytesLike;
+      encryptedOutput2: BytesLike;
+    },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -312,15 +392,17 @@ export class TornadoPool extends BaseContract {
   verifier2(overrides?: CallOverrides): Promise<string>;
 
   verifyProof(
-    _proof: BytesLike,
-    _root: BytesLike,
-    _newRoot: BytesLike,
-    _inputNullifiers: BytesLike[],
-    _outputCommitments: [BytesLike, BytesLike],
-    _outPathIndices: BigNumberish,
-    _extAmount: BigNumberish,
-    _fee: BigNumberish,
-    _extDataHash: BytesLike,
+    _args: {
+      proof: BytesLike;
+      root: BytesLike;
+      newRoot: BytesLike;
+      inputNullifiers: BytesLike[];
+      outputCommitments: [BytesLike, BytesLike];
+      outPathIndices: BigNumberish;
+      extAmount: BigNumberish;
+      fee: BigNumberish;
+      extDataHash: BytesLike;
+    },
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -349,27 +431,50 @@ export class TornadoPool extends BaseContract {
     ): Promise<boolean>;
 
     register(
-      _pubKey: BytesLike,
-      _account: BytesLike,
+      args: { pubKey: BytesLike; account: BytesLike },
       overrides?: CallOverrides
     ): Promise<void>;
 
-    transaction(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
+    registerAndTransact(
+      _registerArgs: { pubKey: BytesLike; account: BytesLike },
+      _proofArgs: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       _extData: {
         recipient: string;
         relayer: string;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
-      _extDataHash: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transaction(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        relayer: string;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+      },
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -378,15 +483,17 @@ export class TornadoPool extends BaseContract {
     verifier2(overrides?: CallOverrides): Promise<string>;
 
     verifyProof(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
-      _extDataHash: BytesLike,
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -441,27 +548,50 @@ export class TornadoPool extends BaseContract {
     ): Promise<BigNumber>;
 
     register(
-      _pubKey: BytesLike,
-      _account: BytesLike,
+      args: { pubKey: BytesLike; account: BytesLike },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    transaction(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
+    registerAndTransact(
+      _registerArgs: { pubKey: BytesLike; account: BytesLike },
+      _proofArgs: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       _extData: {
         recipient: string;
         relayer: string;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
-      _extDataHash: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    transaction(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        relayer: string;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -470,15 +600,17 @@ export class TornadoPool extends BaseContract {
     verifier2(overrides?: CallOverrides): Promise<BigNumber>;
 
     verifyProof(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
-      _extDataHash: BytesLike,
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -510,27 +642,50 @@ export class TornadoPool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     register(
-      _pubKey: BytesLike,
-      _account: BytesLike,
+      args: { pubKey: BytesLike; account: BytesLike },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    transaction(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
+    registerAndTransact(
+      _registerArgs: { pubKey: BytesLike; account: BytesLike },
+      _proofArgs: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       _extData: {
         recipient: string;
         relayer: string;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
-      _extDataHash: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transaction(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        relayer: string;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -539,15 +694,17 @@ export class TornadoPool extends BaseContract {
     verifier2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     verifyProof(
-      _proof: BytesLike,
-      _root: BytesLike,
-      _newRoot: BytesLike,
-      _inputNullifiers: BytesLike[],
-      _outputCommitments: [BytesLike, BytesLike],
-      _outPathIndices: BigNumberish,
-      _extAmount: BigNumberish,
-      _fee: BigNumberish,
-      _extDataHash: BytesLike,
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        newRoot: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        outPathIndices: BigNumberish;
+        extAmount: BigNumberish;
+        fee: BigNumberish;
+        extDataHash: BytesLike;
+      },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

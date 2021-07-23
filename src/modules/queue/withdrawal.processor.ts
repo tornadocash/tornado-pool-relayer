@@ -1,5 +1,6 @@
 import { Job, Queue } from 'bull';
-import { BigNumber } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
+import { BytesLike } from '@ethersproject/bytes';
 import { TxManager } from 'tx-manager';
 
 import { Injectable } from '@nestjs/common';
@@ -13,9 +14,28 @@ import txMangerConfig from '@/config/txManager.config';
 import { BaseProcessor } from './base.processor';
 import { ChainId } from '@/types';
 
+export type ExtData = {
+  recipient: string;
+  relayer: string;
+  encryptedOutput1: BytesLike;
+  encryptedOutput2: BytesLike;
+};
+
+export type ArgsProof = {
+  proof: BytesLike;
+  root: BytesLike;
+  newRoot: BytesLike;
+  inputNullifiers: string[];
+  outputCommitments: BytesLike[];
+  outPathIndices: string;
+  extAmount: BigNumberish;
+  fee: BigNumberish;
+  extDataHash: string;
+};
+
 export interface Withdrawal {
-  args: string[];
-  proof: string;
+  extData: ExtData;
+  args: ArgsProof;
   amount: string;
   txHash: string;
   status: string;
@@ -90,20 +110,18 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
     }
   }
 
-  async prepareTransaction({ proof, args }) {
+  async prepareTransaction({ extData, args }) {
     const { chainId, address } = this.configService.get('base');
 
     const contract = this.providerService.getTornadoPool();
 
-    // @ts-ignore
-    const data = contract.interface.encodeFunctionData('transaction', [proof, ...args]);
+    const data = contract.interface.encodeFunctionData('transaction', [args, extData]);
 
     let gasLimit = this.configService.get<BigNumber>('base.gasLimit');
 
     // need because optimism has dynamic gas limit
     if (chainId === ChainId.OPTIMISM) {
-      // @ts-ignore
-      gasLimit = await contract.estimateGas.transaction(proof, ...args, {
+      gasLimit = await contract.estimateGas.transaction(args, extData, {
         from: address,
         value: BigNumber.from(0)._hex,
         gasPrice: toWei('0.015', 'gwei'),

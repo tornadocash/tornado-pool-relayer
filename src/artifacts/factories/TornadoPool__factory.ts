@@ -216,14 +216,21 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes",
-        name: "_pubKey",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes",
-        name: "_account",
-        type: "bytes",
+        components: [
+          {
+            internalType: "bytes",
+            name: "pubKey",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes",
+            name: "account",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct TornadoPool.Register",
+        name: "args",
+        type: "tuple",
       },
     ],
     name: "register",
@@ -234,44 +241,73 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes",
-        name: "_proof",
-        type: "bytes",
+        components: [
+          {
+            internalType: "bytes",
+            name: "pubKey",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes",
+            name: "account",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct TornadoPool.Register",
+        name: "_registerArgs",
+        type: "tuple",
       },
       {
-        internalType: "bytes32",
-        name: "_root",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_newRoot",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "_inputNullifiers",
-        type: "bytes32[]",
-      },
-      {
-        internalType: "bytes32[2]",
-        name: "_outputCommitments",
-        type: "bytes32[2]",
-      },
-      {
-        internalType: "uint256",
-        name: "_outPathIndices",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_extAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_fee",
-        type: "uint256",
+        components: [
+          {
+            internalType: "bytes",
+            name: "proof",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes32",
+            name: "root",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "newRoot",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32[]",
+            name: "inputNullifiers",
+            type: "bytes32[]",
+          },
+          {
+            internalType: "bytes32[2]",
+            name: "outputCommitments",
+            type: "bytes32[2]",
+          },
+          {
+            internalType: "uint256",
+            name: "outPathIndices",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "extAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "fee",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "extDataHash",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct TornadoPool.Proof",
+        name: "_proofArgs",
+        type: "tuple",
       },
       {
         components: [
@@ -300,10 +336,92 @@ const _abi = [
         name: "_extData",
         type: "tuple",
       },
+    ],
+    name: "registerAndTransact",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
-        internalType: "bytes32",
-        name: "_extDataHash",
-        type: "bytes32",
+        components: [
+          {
+            internalType: "bytes",
+            name: "proof",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes32",
+            name: "root",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "newRoot",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32[]",
+            name: "inputNullifiers",
+            type: "bytes32[]",
+          },
+          {
+            internalType: "bytes32[2]",
+            name: "outputCommitments",
+            type: "bytes32[2]",
+          },
+          {
+            internalType: "uint256",
+            name: "outPathIndices",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "extAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "fee",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "extDataHash",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct TornadoPool.Proof",
+        name: "_args",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "address payable",
+            name: "recipient",
+            type: "address",
+          },
+          {
+            internalType: "address payable",
+            name: "relayer",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "encryptedOutput1",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes",
+            name: "encryptedOutput2",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct TornadoPool.ExtData",
+        name: "_extData",
+        type: "tuple",
       },
     ],
     name: "transaction",
@@ -340,49 +458,56 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes",
-        name: "_proof",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes32",
-        name: "_root",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_newRoot",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "_inputNullifiers",
-        type: "bytes32[]",
-      },
-      {
-        internalType: "bytes32[2]",
-        name: "_outputCommitments",
-        type: "bytes32[2]",
-      },
-      {
-        internalType: "uint256",
-        name: "_outPathIndices",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_extAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_fee",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes32",
-        name: "_extDataHash",
-        type: "bytes32",
+        components: [
+          {
+            internalType: "bytes",
+            name: "proof",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes32",
+            name: "root",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "newRoot",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32[]",
+            name: "inputNullifiers",
+            type: "bytes32[]",
+          },
+          {
+            internalType: "bytes32[2]",
+            name: "outputCommitments",
+            type: "bytes32[2]",
+          },
+          {
+            internalType: "uint256",
+            name: "outPathIndices",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "extAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "fee",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "extDataHash",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct TornadoPool.Proof",
+        name: "_args",
+        type: "tuple",
       },
     ],
     name: "verifyProof",

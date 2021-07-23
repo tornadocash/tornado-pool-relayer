@@ -22,7 +22,7 @@ const numbers = {
   TWO: 2,
   SECOND: 1000,
   ETH_DECIMALS: 18,
-  MERKLE_TREE_HEIGHT: 32,
+  MERKLE_TREE_HEIGHT: 23,
 };
 
 const BG_ZERO = BigNumber.from(numbers.ZERO);
