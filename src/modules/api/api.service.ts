@@ -20,10 +20,10 @@ class ApiService {
 
     return {
       health,
-      chainId,
       version,
-      serviceFee,
       rewardAddress,
+      chainId: Number(chainId),
+      serviceFee: Number(serviceFee),
     };
   }
 
