@@ -10,7 +10,7 @@ class ApiService {
   constructor(
     private configService: ConfigService,
     private providerService: ProviderService,
-    @InjectQueue('withdrawal') private withdrawalQueue: Queue,
+    @InjectQueue('transaction') private transactionQueue: Queue,
   ) {}
 
   async status(): Promise<Status> {
@@ -31,14 +31,14 @@ class ApiService {
     return `This is <a href=https://tornado.cash>tornado.cash</a> Relayer service. Check the <a href=/status>/status</a> for settings`;
   }
 
-  async withdrawal(data: any): Promise<string> {
-    const job = await this.withdrawalQueue.add(data);
+  async transaction(data: any): Promise<string> {
+    const job = await this.transactionQueue.add(data);
 
     return String(job.id);
   }
 
   async getJob(id: string): Promise<Job | null> {
-    return await this.withdrawalQueue.getJob(id);
+    return await this.transactionQueue.getJob(id);
   }
 
   private async healthCheck(): Promise<Health> {

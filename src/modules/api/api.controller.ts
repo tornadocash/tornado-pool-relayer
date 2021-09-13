@@ -2,7 +2,7 @@ import { Controller, Body, Param, Res, Get, Post, HttpStatus } from '@nestjs/com
 import { Response } from 'express';
 
 import { ApiService } from './api.service';
-import { validateWithdrawRequest } from './api.validator';
+import { validateTransactionRequest } from './api.validator';
 
 @Controller()
 export class ApiController {
@@ -29,15 +29,15 @@ export class ApiController {
     return job;
   }
 
-  @Post('/withdrawal')
-  async withdrawal(@Res() res: Response, @Body() { body }: any) {
-    const inputError = validateWithdrawRequest(body);
+  @Post('/transaction')
+  async transaction(@Res() res: Response, @Body() { body }: any) {
+    const inputError = validateTransactionRequest(body);
 
     if (inputError) {
       console.log('Invalid input:', inputError);
       return res.status(HttpStatus.BAD_REQUEST).json({ error: inputError });
     }
 
-    return await this.service.withdrawal(JSON.parse(body));
+    return await this.service.transaction(JSON.parse(body));
   }
 }

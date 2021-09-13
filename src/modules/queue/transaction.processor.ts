@@ -33,7 +33,7 @@ export type ArgsProof = {
   extDataHash: string;
 };
 
-export interface Withdrawal {
+export interface Transaction {
   extData: ExtData;
   args: ArgsProof;
   amount: string;
@@ -43,21 +43,21 @@ export interface Withdrawal {
 }
 
 @Injectable()
-@Processor('withdrawal')
-export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
+@Processor('transaction')
+export class TransactionProcessor extends BaseProcessor<Transaction> {
   constructor(
-    @InjectQueue('withdrawal') public withdrawalQueue: Queue,
+    @InjectQueue('transaction') public transactionQueue: Queue,
     private gasPriceService: GasPriceService,
     private providerService: ProviderService,
     private configService: ConfigService,
   ) {
     super();
-    this.queueName = 'withdrawal';
-    this.queue = withdrawalQueue;
+    this.queueName = 'transaction';
+    this.queue = transactionQueue;
   }
 
   @Process()
-  async processWithdrawals(job: Job<Withdrawal>) {
+  async processTransactions(job: Job<Transaction>) {
     try {
       await job.isActive();
 
@@ -70,7 +70,7 @@ export class WithdrawalProcessor extends BaseProcessor<Withdrawal> {
     }
   }
 
-  async submitTx(job: Job<Withdrawal>) {
+  async submitTx(job: Job<Transaction>) {
     try {
       const txManager = new TxManager(txMangerConfig());
 

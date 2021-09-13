@@ -31,7 +31,7 @@ const recipientType = {
   },
 };
 
-const withdrawSchema = {
+const transactionSchema = {
   type: 'object',
   properties: {
     proof: proofType,
@@ -46,9 +46,9 @@ const withdrawSchema = {
   required: ['proof', 'args'],
 };
 
-const validateTornadoWithdraw = ajv.compile(withdrawSchema);
+const validateTornadoTransaction = ajv.compile(transactionSchema);
 
-function getInputError(validator: ValidateFunction, data: typeof withdrawSchema) {
+function getInputError(validator: ValidateFunction, data: typeof transactionSchema) {
   validator(data);
   if (validator.errors) {
     const [error] = validator.errors;
@@ -57,8 +57,8 @@ function getInputError(validator: ValidateFunction, data: typeof withdrawSchema)
   return null;
 }
 
-function validateWithdrawRequest(data: typeof withdrawSchema) {
-  return getInputError(validateTornadoWithdraw, data);
+function validateTransactionRequest(data: typeof transactionSchema) {
+  return getInputError(validateTornadoTransaction, data);
 }
 
-export { validateWithdrawRequest };
+export { validateTransactionRequest };

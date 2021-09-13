@@ -24,9 +24,11 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   functions: {
     "FIELD_SIZE()": FunctionFragment;
     "MAX_EXT_AMOUNT()": FunctionFragment;
-    "calculateExternalAmount(uint256)": FunctionFragment;
+    "MAX_FEE()": FunctionFragment;
+    "calculatePublicAmount(int256,uint256)": FunctionFragment;
     "currentCommitmentIndex()": FunctionFragment;
     "currentRoot()": FunctionFragment;
+    "initialize(bytes32)": FunctionFragment;
     "isSpent(bytes32)": FunctionFragment;
     "nullifierHashes(bytes32)": FunctionFragment;
     "register(tuple)": FunctionFragment;
@@ -45,9 +47,10 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "MAX_EXT_AMOUNT",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "MAX_FEE", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "calculateExternalAmount",
-    values: [BigNumberish]
+    functionFragment: "calculatePublicAmount",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "currentCommitmentIndex",
@@ -56,6 +59,10 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "currentRoot",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "isSpent", values: [BytesLike]): string;
   encodeFunctionData(
@@ -77,13 +84,14 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       }
@@ -99,13 +107,14 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       }
@@ -126,8 +135,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       }
     ]
@@ -138,8 +146,9 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "MAX_EXT_AMOUNT",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "MAX_FEE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "calculateExternalAmount",
+    functionFragment: "calculatePublicAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -150,6 +159,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "currentRoot",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isSpent", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nullifierHashes",
@@ -232,14 +242,22 @@ export class TornadoPool extends BaseContract {
 
     MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    calculateExternalAmount(
+    MAX_FEE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    calculatePublicAmount(
       _extAmount: BigNumberish,
+      _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     currentCommitmentIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     currentRoot(overrides?: CallOverrides): Promise<[string]>;
+
+    initialize(
+      _currentRoot: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     isSpent(
       _nullifierHash: BytesLike,
@@ -265,13 +283,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -286,13 +305,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -311,8 +331,7 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       overrides?: CallOverrides
@@ -323,14 +342,22 @@ export class TornadoPool extends BaseContract {
 
   MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
-  calculateExternalAmount(
+  MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
+  calculatePublicAmount(
     _extAmount: BigNumberish,
+    _fee: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   currentCommitmentIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
   currentRoot(overrides?: CallOverrides): Promise<string>;
+
+  initialize(
+    _currentRoot: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   isSpent(
     _nullifierHash: BytesLike,
@@ -353,13 +380,14 @@ export class TornadoPool extends BaseContract {
       inputNullifiers: BytesLike[];
       outputCommitments: [BytesLike, BytesLike];
       outPathIndices: BigNumberish;
-      extAmount: BigNumberish;
-      fee: BigNumberish;
+      publicAmount: BigNumberish;
       extDataHash: BytesLike;
     },
     _extData: {
       recipient: string;
+      extAmount: BigNumberish;
       relayer: string;
+      fee: BigNumberish;
       encryptedOutput1: BytesLike;
       encryptedOutput2: BytesLike;
     },
@@ -374,13 +402,14 @@ export class TornadoPool extends BaseContract {
       inputNullifiers: BytesLike[];
       outputCommitments: [BytesLike, BytesLike];
       outPathIndices: BigNumberish;
-      extAmount: BigNumberish;
-      fee: BigNumberish;
+      publicAmount: BigNumberish;
       extDataHash: BytesLike;
     },
     _extData: {
       recipient: string;
+      extAmount: BigNumberish;
       relayer: string;
+      fee: BigNumberish;
       encryptedOutput1: BytesLike;
       encryptedOutput2: BytesLike;
     },
@@ -399,8 +428,7 @@ export class TornadoPool extends BaseContract {
       inputNullifiers: BytesLike[];
       outputCommitments: [BytesLike, BytesLike];
       outPathIndices: BigNumberish;
-      extAmount: BigNumberish;
-      fee: BigNumberish;
+      publicAmount: BigNumberish;
       extDataHash: BytesLike;
     },
     overrides?: CallOverrides
@@ -411,14 +439,22 @@ export class TornadoPool extends BaseContract {
 
     MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    calculateExternalAmount(
+    MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    calculatePublicAmount(
       _extAmount: BigNumberish,
+      _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     currentCommitmentIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentRoot(overrides?: CallOverrides): Promise<string>;
+
+    initialize(
+      _currentRoot: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     isSpent(
       _nullifierHash: BytesLike,
@@ -444,13 +480,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -465,13 +502,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -490,8 +528,7 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       overrides?: CallOverrides
@@ -528,14 +565,22 @@ export class TornadoPool extends BaseContract {
 
     MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    calculateExternalAmount(
+    MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    calculatePublicAmount(
       _extAmount: BigNumberish,
+      _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     currentCommitmentIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentRoot(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      _currentRoot: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     isSpent(
       _nullifierHash: BytesLike,
@@ -561,13 +606,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -582,13 +628,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -607,8 +654,7 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       overrides?: CallOverrides
@@ -620,8 +666,11 @@ export class TornadoPool extends BaseContract {
 
     MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    calculateExternalAmount(
+    MAX_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    calculatePublicAmount(
       _extAmount: BigNumberish,
+      _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -630,6 +679,11 @@ export class TornadoPool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     currentRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    initialize(
+      _currentRoot: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     isSpent(
       _nullifierHash: BytesLike,
@@ -655,13 +709,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -676,13 +731,14 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       _extData: {
         recipient: string;
+        extAmount: BigNumberish;
         relayer: string;
+        fee: BigNumberish;
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
       },
@@ -701,8 +757,7 @@ export class TornadoPool extends BaseContract {
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
         outPathIndices: BigNumberish;
-        extAmount: BigNumberish;
-        fee: BigNumberish;
+        publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       overrides?: CallOverrides
