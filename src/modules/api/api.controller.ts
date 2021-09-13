@@ -31,14 +31,15 @@ export class ApiController {
 
   @Post('/transaction')
   async transaction(@Res() res: Response, @Body() { body }: any) {
-    const inputError = validateTransactionRequest(body);
+    const params = JSON.parse(body);
+    const inputError = validateTransactionRequest(params);
 
     if (inputError) {
       console.log('Invalid input:', inputError);
       return res.status(HttpStatus.BAD_REQUEST).json({ error: inputError });
     }
 
-    const jobId = await this.service.transaction(JSON.parse(body));
+    const jobId = await this.service.transaction(params);
 
     return res.send(jobId);
   }
