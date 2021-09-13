@@ -19,31 +19,43 @@ const addressType = {
 
 const proofType = { type: 'string', pattern: '^0x[a-fA-F0-9]{512}$' };
 const bytes32Type = { type: 'string', pattern: '^0x[a-fA-F0-9]{64}$' };
-const arrayType = { type: 'array', pattern: '^0x[a-fA-F0-9]{64}$' };
-
-const recipientType = {
-  type: 'object',
-  properties: {
-    recipient: addressType,
-    relayer: addressType,
-    encryptedOutput1: bytes32Type,
-    encryptedOutput2: bytes32Type,
-  },
-};
+const externalAmountType = { type: 'string', pattern: '^(0x[a-fA-F0-9]{64}|-0x[a-fA-F0-9]{63})$' };
+const encryptedOutputType = { type: 'string', pattern: '^0x[a-fA-F0-9]{312}$' };
+const arrayType = { type: 'array', items: bytes32Type };
 
 const transactionSchema = {
   type: 'object',
   properties: {
-    proof: proofType,
+    amount: {
+      type: 'string',
+    },
+    extData: {
+      type: 'object',
+      properties: {
+        encryptedOutput1: encryptedOutputType,
+        encryptedOutput2: encryptedOutputType,
+        extAmount: externalAmountType,
+        fee: bytes32Type,
+        recipient: addressType,
+        relayer: addressType,
+      },
+    },
     args: {
-      type: 'array',
-      maxItems: 9,
-      minItems: 9,
-      items: [bytes32Type, bytes32Type, arrayType, bytes32Type, bytes32Type, bytes32Type, bytes32Type, recipientType, bytes32Type],
+      type: 'object',
+      properties: {
+        extDataHash: bytes32Type,
+        inputNullifiers: arrayType,
+        newRoot: bytes32Type,
+        outPathIndices: bytes32Type,
+        outputCommitments: arrayType,
+        proof: proofType,
+        publicAmount: bytes32Type,
+        root: bytes32Type,
+      },
     },
   },
   additionalProperties: false,
-  required: ['proof', 'args'],
+  required: ['extData', 'args', 'amount'],
 };
 
 const validateTornadoTransaction = ajv.compile(transactionSchema);
