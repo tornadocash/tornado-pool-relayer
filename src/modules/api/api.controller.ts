@@ -26,7 +26,7 @@ export class ApiController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "The job doesn't exist" });
     }
 
-    return job;
+    return res.json(job);
   }
 
   @Post('/transaction')
@@ -38,6 +38,8 @@ export class ApiController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: inputError });
     }
 
-    return await this.service.transaction(JSON.parse(body));
+    const jobId = await this.service.transaction(JSON.parse(body));
+
+    return res.send(jobId);
   }
 }

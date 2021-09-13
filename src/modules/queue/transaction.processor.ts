@@ -30,6 +30,7 @@ export type ArgsProof = {
   inputNullifiers: string[];
   outputCommitments: BytesLike[];
   outPathIndices: string;
+  publicAmount: string;
   extDataHash: string;
 };
 
@@ -134,7 +135,7 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
       data,
       gasLimit,
       to: contract.address,
-      gasPrice: fast.toString(),
+      gasPrice: toWei(fast.toString(), 'gwei'),
       value: BigNumber.from(0)._hex,
     };
   }
