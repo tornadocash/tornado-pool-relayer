@@ -17,6 +17,8 @@ import { ChainId } from '@/types';
 export type ExtData = {
   recipient: string;
   relayer: string;
+  fee: BigNumberish;
+  extAmount: BigNumberish;
   encryptedOutput1: BytesLike;
   encryptedOutput2: BytesLike;
 };
@@ -28,8 +30,6 @@ export type ArgsProof = {
   inputNullifiers: string[];
   outputCommitments: BytesLike[];
   outPathIndices: string;
-  extAmount: BigNumberish;
-  fee: BigNumberish;
   extDataHash: string;
 };
 
@@ -61,9 +61,9 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     try {
       await job.isActive();
 
-      const { args, amount } = job.data;
+      const { extData, amount } = job.data;
 
-      await this.checkFee({ fee: args[6], amount });
+      await this.checkFee({ fee: extData.fee, amount });
       await this.submitTx(job);
     } catch (err) {
       await job.moveToFailed(err, true);
