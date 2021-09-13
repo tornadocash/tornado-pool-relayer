@@ -19,11 +19,6 @@ const _abi = [
         name: "_verifier16",
         type: "address",
       },
-      {
-        internalType: "bytes32",
-        name: "_currentRoot",
-        type: "bytes32",
-      },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -122,6 +117,19 @@ const _abi = [
     name: "MAX_EXT_AMOUNT",
     outputs: [
       {
+        internalType: "int256",
+        name: "",
+        type: "int256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MAX_FEE",
+    outputs: [
+      {
         internalType: "uint256",
         name: "",
         type: "uint256",
@@ -133,17 +141,22 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
+        internalType: "int256",
         name: "_extAmount",
+        type: "int256",
+      },
+      {
+        internalType: "uint256",
+        name: "_fee",
         type: "uint256",
       },
     ],
-    name: "calculateExternalAmount",
+    name: "calculatePublicAmount",
     outputs: [
       {
-        internalType: "int256",
+        internalType: "uint256",
         name: "",
-        type: "int256",
+        type: "uint256",
       },
     ],
     stateMutability: "pure",
@@ -173,6 +186,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_currentRoot",
+        type: "bytes32",
+      },
+    ],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -291,12 +317,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "extAmount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "fee",
+            name: "publicAmount",
             type: "uint256",
           },
           {
@@ -317,9 +338,19 @@ const _abi = [
             type: "address",
           },
           {
+            internalType: "int256",
+            name: "extAmount",
+            type: "int256",
+          },
+          {
             internalType: "address payable",
             name: "relayer",
             type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "fee",
+            type: "uint256",
           },
           {
             internalType: "bytes",
@@ -378,12 +409,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "extAmount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "fee",
+            name: "publicAmount",
             type: "uint256",
           },
           {
@@ -404,9 +430,19 @@ const _abi = [
             type: "address",
           },
           {
+            internalType: "int256",
+            name: "extAmount",
+            type: "int256",
+          },
+          {
             internalType: "address payable",
             name: "relayer",
             type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "fee",
+            type: "uint256",
           },
           {
             internalType: "bytes",
@@ -491,12 +527,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "extAmount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "fee",
+            name: "publicAmount",
             type: "uint256",
           },
           {
