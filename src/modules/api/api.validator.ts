@@ -26,9 +26,6 @@ const arrayType = { type: 'array', items: bytes32Type };
 const transactionSchema = {
   type: 'object',
   properties: {
-    amount: {
-      type: 'string',
-    },
     extData: {
       type: 'object',
       properties: {
@@ -55,7 +52,7 @@ const transactionSchema = {
     },
   },
   additionalProperties: false,
-  required: ['extData', 'args', 'amount'],
+  required: ['extData', 'args'],
 };
 
 const validateTornadoTransaction = ajv.compile(transactionSchema);

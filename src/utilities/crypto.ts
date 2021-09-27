@@ -10,7 +10,7 @@ export function toChecksumAddress(value: string): string {
   return utils.getAddress(value);
 }
 
-export function toWei(value: string, uintName = 'wei') {
+export function toWei(value: string, uintName = 'ether') {
   return utils.parseUnits(value, uintName);
 }
 
@@ -24,4 +24,14 @@ export function numberToHex(value: number) {
 
 export function fromWei(balance: BigNumberish) {
   return utils.formatUnits(balance, numbers.ETH_DECIMALS);
+}
+
+export function getToIntegerMultiplier(value: number | string): number {
+  const [, decimals] = String(value).split('.');
+
+  if (!decimals) {
+    return numbers.ZERO;
+  }
+
+  return Math.pow(numbers.TEN, decimals.length);
 }
