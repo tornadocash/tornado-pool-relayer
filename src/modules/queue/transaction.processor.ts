@@ -7,7 +7,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
 
-import { toWei } from '@/utilities';
+import { numbers } from '@/constants';
+import { toWei, getToIntegerMultiplier } from '@/utilities';
 import { GasPriceService, ProviderService } from '@/services';
 import txMangerConfig from '@/config/txManager.config';
 
@@ -37,7 +38,6 @@ export type ArgsProof = {
 export interface Transaction {
   extData: ExtData;
   args: ArgsProof;
-  amount: string;
   txHash: string;
   status: string;
   confirmations: number;
@@ -62,9 +62,9 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     try {
       await job.isActive();
 
-      const { extData, amount } = job.data;
+      const { extData } = job.data;
 
-      await this.checkFee({ fee: extData.fee, amount });
+      await this.checkFee({ fee: extData.fee, externalAmount: extData.extAmount });
       await this.submitTx(job);
     } catch (err) {
       await job.moveToFailed(err, true);
@@ -140,16 +140,29 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     };
   }
 
-  async checkFee({ fee, amount }) {
-    const { gasLimit, serviceFee } = this.configService.get('base');
+  getServiceFee(externalAmount) {
+    const amount = BigNumber.from(externalAmount);
+    const { serviceFee } = this.configService.get('base');
+
+    // for withdrawals the amount is negative
+    if (amount.isNegative()) {
+      const integerMultiplier = getToIntegerMultiplier(serviceFee.withdrawal);
+      return BigNumber.from(amount)
+        .mul(serviceFee.withdrawal * integerMultiplier)
+        .div(numbers.ONE_HUNDRED * integerMultiplier);
+    }
+
+    return serviceFee.transfer;
+  }
+
+  async checkFee({ fee, externalAmount }) {
+    const { gasLimit } = this.configService.get('base');
 
     const { fast } = await this.gasPriceService.getGasPrice();
 
     const expense = BigNumber.from(toWei(fast.toString(), 'gwei')).mul(gasLimit);
 
-    const feePercent = BigNumber.from(amount)
-      .mul(serviceFee * 1e10)
-      .div(100 * 1e10);
+    const feePercent = this.getServiceFee(externalAmount);
 
     const desiredFee = expense.add(feePercent);
 

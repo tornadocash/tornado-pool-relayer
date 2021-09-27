@@ -3,10 +3,15 @@ type Health = {
   error: string;
 };
 
+type ServiceFee = {
+  transfer: string;
+  withdrawal: number;
+};
+
 type Status = {
   health: Health;
-  rewardAddress: string;
-  version: string;
-  serviceFee: number;
   chainId: number;
+  version: string;
+  rewardAddress: string;
+  serviceFee: ServiceFee;
 };
