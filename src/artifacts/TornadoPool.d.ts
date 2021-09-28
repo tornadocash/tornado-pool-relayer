@@ -25,18 +25,28 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     "FIELD_SIZE()": FunctionFragment;
     "MAX_EXT_AMOUNT()": FunctionFragment;
     "MAX_FEE()": FunctionFragment;
+    "ROOT_HISTORY_SIZE()": FunctionFragment;
+    "ZERO_VALUE()": FunctionFragment;
     "calculatePublicAmount(int256,uint256)": FunctionFragment;
-    "currentCommitmentIndex()": FunctionFragment;
-    "currentRoot()": FunctionFragment;
-    "initialize(bytes32)": FunctionFragment;
+    "currentRootIndex()": FunctionFragment;
+    "filledSubtrees(uint256)": FunctionFragment;
+    "getLastRoot()": FunctionFragment;
+    "hashLeftRight(bytes32,bytes32)": FunctionFragment;
+    "hasher()": FunctionFragment;
+    "initialize()": FunctionFragment;
+    "isKnownRoot(bytes32)": FunctionFragment;
     "isSpent(bytes32)": FunctionFragment;
+    "levels()": FunctionFragment;
+    "nextIndex()": FunctionFragment;
     "nullifierHashes(bytes32)": FunctionFragment;
     "register(tuple)": FunctionFragment;
     "registerAndTransact(tuple,tuple,tuple)": FunctionFragment;
+    "roots(uint256)": FunctionFragment;
     "transaction(tuple,tuple)": FunctionFragment;
     "verifier16()": FunctionFragment;
     "verifier2()": FunctionFragment;
     "verifyProof(tuple)": FunctionFragment;
+    "zeros(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -49,22 +59,45 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "MAX_FEE", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "ROOT_HISTORY_SIZE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ZERO_VALUE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "calculatePublicAmount",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "currentCommitmentIndex",
+    functionFragment: "currentRootIndex",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "currentRoot",
+    functionFragment: "filledSubtrees",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLastRoot",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "hashLeftRight",
+    values: [BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "hasher", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isKnownRoot",
     values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "isSpent", values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: "levels", values?: undefined): string;
+  encodeFunctionData(functionFragment: "nextIndex", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "nullifierHashes",
     values: [BytesLike]
@@ -80,10 +113,8 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
       {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -97,16 +128,15 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
       }
     ]
   ): string;
+  encodeFunctionData(functionFragment: "roots", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "transaction",
     values: [
       {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -131,15 +161,14 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
       {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       }
     ]
   ): string;
+  encodeFunctionData(functionFragment: "zeros", values: [BigNumberish]): string;
 
   decodeFunctionResult(functionFragment: "FIELD_SIZE", data: BytesLike): Result;
   decodeFunctionResult(
@@ -148,19 +177,39 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "MAX_FEE", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "ROOT_HISTORY_SIZE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "ZERO_VALUE", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "calculatePublicAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentCommitmentIndex",
+    functionFragment: "currentRootIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentRoot",
+    functionFragment: "filledSubtrees",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLastRoot",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hashLeftRight",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "hasher", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isKnownRoot",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "isSpent", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "levels", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nextIndex", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nullifierHashes",
     data: BytesLike
@@ -170,6 +219,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "registerAndTransact",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "roots", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transaction",
     data: BytesLike
@@ -180,6 +230,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "verifyProof",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "zeros", data: BytesLike): Result;
 
   events: {
     "EncryptedAccount(address,bytes)": EventFragment;
@@ -244,25 +295,50 @@ export class TornadoPool extends BaseContract {
 
     MAX_FEE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<[number]>;
+
+    ZERO_VALUE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    currentCommitmentIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
+    currentRootIndex(overrides?: CallOverrides): Promise<[number]>;
 
-    currentRoot(overrides?: CallOverrides): Promise<[string]>;
+    filledSubtrees(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getLastRoot(overrides?: CallOverrides): Promise<[string]>;
+
+    hashLeftRight(
+      _left: BytesLike,
+      _right: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    hasher(overrides?: CallOverrides): Promise<[string]>;
 
     initialize(
-      _currentRoot: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    isKnownRoot(
+      _root: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     isSpent(
       _nullifierHash: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    levels(overrides?: CallOverrides): Promise<[number]>;
+
+    nextIndex(overrides?: CallOverrides): Promise<[number]>;
 
     nullifierHashes(
       arg0: BytesLike,
@@ -279,10 +355,8 @@ export class TornadoPool extends BaseContract {
       _proofArgs: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -297,14 +371,14 @@ export class TornadoPool extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
     transaction(
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -327,15 +401,15 @@ export class TornadoPool extends BaseContract {
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    zeros(i: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
 
   FIELD_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -344,25 +418,47 @@ export class TornadoPool extends BaseContract {
 
   MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
 
+  ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<number>;
+
+  ZERO_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
+
   calculatePublicAmount(
     _extAmount: BigNumberish,
     _fee: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  currentCommitmentIndex(overrides?: CallOverrides): Promise<BigNumber>;
+  currentRootIndex(overrides?: CallOverrides): Promise<number>;
 
-  currentRoot(overrides?: CallOverrides): Promise<string>;
+  filledSubtrees(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getLastRoot(overrides?: CallOverrides): Promise<string>;
+
+  hashLeftRight(
+    _left: BytesLike,
+    _right: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  hasher(overrides?: CallOverrides): Promise<string>;
 
   initialize(
-    _currentRoot: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   isSpent(
     _nullifierHash: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  levels(overrides?: CallOverrides): Promise<number>;
+
+  nextIndex(overrides?: CallOverrides): Promise<number>;
 
   nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
@@ -376,10 +472,8 @@ export class TornadoPool extends BaseContract {
     _proofArgs: {
       proof: BytesLike;
       root: BytesLike;
-      newRoot: BytesLike;
       inputNullifiers: BytesLike[];
       outputCommitments: [BytesLike, BytesLike];
-      outPathIndices: BigNumberish;
       publicAmount: BigNumberish;
       extDataHash: BytesLike;
     },
@@ -394,14 +488,14 @@ export class TornadoPool extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
   transaction(
     _args: {
       proof: BytesLike;
       root: BytesLike;
-      newRoot: BytesLike;
       inputNullifiers: BytesLike[];
       outputCommitments: [BytesLike, BytesLike];
-      outPathIndices: BigNumberish;
       publicAmount: BigNumberish;
       extDataHash: BytesLike;
     },
@@ -424,15 +518,15 @@ export class TornadoPool extends BaseContract {
     _args: {
       proof: BytesLike;
       root: BytesLike;
-      newRoot: BytesLike;
       inputNullifiers: BytesLike[];
       outputCommitments: [BytesLike, BytesLike];
-      outPathIndices: BigNumberish;
       publicAmount: BigNumberish;
       extDataHash: BytesLike;
     },
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  zeros(i: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     FIELD_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -441,25 +535,45 @@ export class TornadoPool extends BaseContract {
 
     MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<number>;
+
+    ZERO_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    currentCommitmentIndex(overrides?: CallOverrides): Promise<BigNumber>;
+    currentRootIndex(overrides?: CallOverrides): Promise<number>;
 
-    currentRoot(overrides?: CallOverrides): Promise<string>;
-
-    initialize(
-      _currentRoot: BytesLike,
+    filledSubtrees(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
+
+    getLastRoot(overrides?: CallOverrides): Promise<string>;
+
+    hashLeftRight(
+      _left: BytesLike,
+      _right: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    hasher(overrides?: CallOverrides): Promise<string>;
+
+    initialize(overrides?: CallOverrides): Promise<void>;
+
+    isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     isSpent(
       _nullifierHash: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    levels(overrides?: CallOverrides): Promise<number>;
+
+    nextIndex(overrides?: CallOverrides): Promise<number>;
 
     nullifierHashes(
       arg0: BytesLike,
@@ -476,10 +590,8 @@ export class TornadoPool extends BaseContract {
       _proofArgs: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -494,14 +606,14 @@ export class TornadoPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
     transaction(
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -524,15 +636,15 @@ export class TornadoPool extends BaseContract {
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    zeros(i: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -567,25 +679,50 @@ export class TornadoPool extends BaseContract {
 
     MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ZERO_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    currentCommitmentIndex(overrides?: CallOverrides): Promise<BigNumber>;
+    currentRootIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentRoot(overrides?: CallOverrides): Promise<BigNumber>;
+    filledSubtrees(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLastRoot(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hashLeftRight(
+      _left: BytesLike,
+      _right: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    hasher(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      _currentRoot: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    isKnownRoot(
+      _root: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isSpent(
       _nullifierHash: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    levels(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nextIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     nullifierHashes(
       arg0: BytesLike,
@@ -602,10 +739,8 @@ export class TornadoPool extends BaseContract {
       _proofArgs: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -620,14 +755,14 @@ export class TornadoPool extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    roots(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     transaction(
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -650,15 +785,15 @@ export class TornadoPool extends BaseContract {
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    zeros(i: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -668,27 +803,50 @@ export class TornadoPool extends BaseContract {
 
     MAX_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ZERO_VALUE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    currentCommitmentIndex(
+    currentRootIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    filledSubtrees(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    currentRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getLastRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hashLeftRight(
+      _left: BytesLike,
+      _right: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hasher(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
-      _currentRoot: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isKnownRoot(
+      _root: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isSpent(
       _nullifierHash: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    levels(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    nextIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nullifierHashes(
       arg0: BytesLike,
@@ -705,10 +863,8 @@ export class TornadoPool extends BaseContract {
       _proofArgs: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -723,14 +879,17 @@ export class TornadoPool extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    roots(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     transaction(
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
@@ -753,13 +912,16 @@ export class TornadoPool extends BaseContract {
       _args: {
         proof: BytesLike;
         root: BytesLike;
-        newRoot: BytesLike;
         inputNullifiers: BytesLike[];
         outputCommitments: [BytesLike, BytesLike];
-        outPathIndices: BigNumberish;
         publicAmount: BigNumberish;
         extDataHash: BytesLike;
       },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    zeros(
+      i: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

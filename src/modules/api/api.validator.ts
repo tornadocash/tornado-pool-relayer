@@ -42,8 +42,6 @@ const transactionSchema = {
       properties: {
         extDataHash: bytes32Type,
         inputNullifiers: arrayType,
-        newRoot: bytes32Type,
-        outPathIndices: bytes32Type,
         outputCommitments: arrayType,
         proof: proofType,
         publicAmount: bytes32Type,

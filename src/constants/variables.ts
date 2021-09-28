@@ -3,11 +3,11 @@ import { ChainId } from '@/types';
 
 const NETWORKS_INFO: { [chainId in ChainId] } = {
   [ChainId.MAINNET]: {
-    gasLimit: BigNumber.from(400000),
+    gasLimit: BigNumber.from(1000000),
     minimumBalance: '0.5',
   },
   [ChainId.GOERLI]: {
-    gasLimit: BigNumber.from(400000),
+    gasLimit: BigNumber.from(1000000),
     minimumBalance: '0.5',
   },
   [ChainId.OPTIMISM]: {

@@ -19,6 +19,16 @@ const _abi = [
         name: "_verifier16",
         type: "address",
       },
+      {
+        internalType: "uint32",
+        name: "_levels",
+        type: "uint32",
+      },
+      {
+        internalType: "address",
+        name: "_hasher",
+        type: "address",
+      },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -139,6 +149,32 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "ROOT_HISTORY_SIZE",
+    outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "ZERO_VALUE",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "int256",
@@ -164,12 +200,31 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "currentCommitmentIndex",
+    name: "currentRootIndex",
     outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    name: "filledSubtrees",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
     stateMutability: "view",
@@ -177,7 +232,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "currentRoot",
+    name: "getLastRoot",
     outputs: [
       {
         internalType: "bytes32",
@@ -192,13 +247,63 @@ const _abi = [
     inputs: [
       {
         internalType: "bytes32",
-        name: "_currentRoot",
+        name: "_left",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_right",
         type: "bytes32",
       },
     ],
+    name: "hashLeftRight",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "hasher",
+    outputs: [
+      {
+        internalType: "contract IHasher",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_root",
+        type: "bytes32",
+      },
+    ],
+    name: "isKnownRoot",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -215,6 +320,32 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "levels",
+    outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "nextIndex",
+    outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
       },
     ],
     stateMutability: "view",
@@ -296,11 +427,6 @@ const _abi = [
             type: "bytes32",
           },
           {
-            internalType: "bytes32",
-            name: "newRoot",
-            type: "bytes32",
-          },
-          {
             internalType: "bytes32[]",
             name: "inputNullifiers",
             type: "bytes32[]",
@@ -309,11 +435,6 @@ const _abi = [
             internalType: "bytes32[2]",
             name: "outputCommitments",
             type: "bytes32[2]",
-          },
-          {
-            internalType: "uint256",
-            name: "outPathIndices",
-            type: "uint256",
           },
           {
             internalType: "uint256",
@@ -376,6 +497,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "roots",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "bytes",
@@ -388,11 +528,6 @@ const _abi = [
             type: "bytes32",
           },
           {
-            internalType: "bytes32",
-            name: "newRoot",
-            type: "bytes32",
-          },
-          {
             internalType: "bytes32[]",
             name: "inputNullifiers",
             type: "bytes32[]",
@@ -401,11 +536,6 @@ const _abi = [
             internalType: "bytes32[2]",
             name: "outputCommitments",
             type: "bytes32[2]",
-          },
-          {
-            internalType: "uint256",
-            name: "outPathIndices",
-            type: "uint256",
           },
           {
             internalType: "uint256",
@@ -506,11 +636,6 @@ const _abi = [
             type: "bytes32",
           },
           {
-            internalType: "bytes32",
-            name: "newRoot",
-            type: "bytes32",
-          },
-          {
             internalType: "bytes32[]",
             name: "inputNullifiers",
             type: "bytes32[]",
@@ -519,11 +644,6 @@ const _abi = [
             internalType: "bytes32[2]",
             name: "outputCommitments",
             type: "bytes32[2]",
-          },
-          {
-            internalType: "uint256",
-            name: "outPathIndices",
-            type: "uint256",
           },
           {
             internalType: "uint256",
@@ -550,6 +670,25 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "i",
+        type: "uint256",
+      },
+    ],
+    name: "zeros",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
 ];
