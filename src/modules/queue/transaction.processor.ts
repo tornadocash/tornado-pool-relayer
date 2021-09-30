@@ -1,48 +1,18 @@
-import { Job, Queue } from 'bull';
-import { BigNumber, BigNumberish } from 'ethers';
-import { BytesLike } from '@ethersproject/bytes';
+import { BigNumber } from 'ethers';
 import { TxManager } from 'tx-manager';
+import { Job, Queue, DoneCallback } from 'bull';
 
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectQueue, Process, Processor } from '@nestjs/bull';
+import { InjectQueue, Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 
-import { numbers } from '@/constants';
+import { numbers, CONTRACT_ERRORS } from '@/constants';
 import { toWei, getToIntegerMultiplier } from '@/utilities';
 import { GasPriceService, ProviderService } from '@/services';
 import txMangerConfig from '@/config/txManager.config';
 
 import { BaseProcessor } from './base.processor';
-import { ChainId } from '@/types';
-
-export type ExtData = {
-  recipient: string;
-  relayer: string;
-  fee: BigNumberish;
-  extAmount: BigNumberish;
-  encryptedOutput1: BytesLike;
-  encryptedOutput2: BytesLike;
-};
-
-export type ArgsProof = {
-  proof: BytesLike;
-  root: BytesLike;
-  newRoot: BytesLike;
-  inputNullifiers: string[];
-  outputCommitments: BytesLike[];
-  outPathIndices: string;
-  publicAmount: string;
-  extDataHash: string;
-};
-
-export interface Transaction {
-  extData: ExtData;
-  args: ArgsProof;
-  txHash: string;
-  status: string;
-  confirmations: number;
-}
-
+import { ChainId, Transaction } from '@/types';
 @Injectable()
 @Processor('transaction')
 export class TransactionProcessor extends BaseProcessor<Transaction> {
@@ -58,17 +28,38 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
   }
 
   @Process()
-  async processTransactions(job: Job<Transaction>) {
+  async processTransactions(job: Job<Transaction>, cb: DoneCallback) {
     try {
-      await job.isActive();
-
       const { extData } = job.data;
 
       await this.checkFee({ fee: extData.fee, externalAmount: extData.extAmount });
       await this.submitTx(job);
+
+      cb(null);
     } catch (err) {
-      await job.moveToFailed(err, true);
+      cb(err);
     }
+  }
+
+  @OnQueueActive()
+  async onActive(job: Job) {
+    job.data.status = 'ACCEPTED';
+
+    await job.update(job.data);
+  }
+
+  @OnQueueCompleted()
+  async onCompleted(job: Job) {
+    job.data.status = 'CONFIRMED';
+
+    await job.update(job.data);
+  }
+
+  @OnQueueFailed()
+  async onFailed(job: Job) {
+    job.data.status = 'FAILED';
+
+    await job.update(job.data);
   }
 
   async submitTx(job: Job<Transaction>) {
@@ -97,17 +88,11 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
           await job.update(job.data);
         });
 
-      if (receipt.status === 1) {
-        await job.isCompleted();
-
-        job.data.status = 'SENT';
-
-        await job.update(job.data);
-      } else {
+      if (receipt.status !== 1) {
         throw new Error('Submitted transaction failed');
       }
-    } catch (e) {
-      throw new Error(`Revert by smart contract ${e.message}`);
+    } catch (err) {
+      return this.handleError(err);
     }
   }
 
@@ -169,5 +154,22 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     if (BigNumber.from(fee).lt(desiredFee)) {
       throw new Error('Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.');
     }
+  }
+
+  handleError(e) {
+    // Sometimes ethers wraps known errors, unwrap it in this case
+    if (e?.error?.error) {
+      e = e.error;
+    }
+
+    const message = e?.error ? e.error.message : e.message;
+
+    const error = CONTRACT_ERRORS.find((e) => (typeof e === 'string' ? e === message : message.match(e)));
+
+    if (error) {
+      throw new Error(`Revert by smart contract: ${error}`);
+    }
+
+    throw new Error('Relayer did not send your transaction. Please choose a different relayer.');
   }
 }

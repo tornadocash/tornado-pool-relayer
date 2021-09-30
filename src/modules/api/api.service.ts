@@ -1,10 +1,12 @@
-import { Queue, Job } from 'bull';
+import { Queue } from 'bull';
+import { v4 as uuid } from 'uuid';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 
 import { ProviderService } from '@/services';
 import { ConfigService } from '@nestjs/config';
 
+import { Transaction } from '@/types';
 @Injectable()
 class ApiService {
   constructor(
@@ -32,13 +34,24 @@ class ApiService {
   }
 
   async transaction(data: any): Promise<string> {
-    const job = await this.transactionQueue.add(data);
+    const jobId = uuid();
 
-    return String(job.id);
+    await this.transactionQueue.add({ ...data, status: 'QUEUED' }, { jobId });
+
+    return jobId;
   }
 
-  async getJob(id: string): Promise<Job | null> {
-    return await this.transactionQueue.getJob(id);
+  async getJob(id: string): Promise<Transaction | null> {
+    const job = await this.transactionQueue.getJob(id);
+
+    if (!job) {
+      return null;
+    }
+
+    return {
+      ...job.data,
+      failedReason: job.failedReason,
+    };
   }
 
   private async healthCheck(): Promise<Health> {
