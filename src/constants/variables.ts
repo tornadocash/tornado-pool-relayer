@@ -33,3 +33,14 @@ const FIELD_SIZE = BigNumber.from('218882428718392752222464057452572750885483644
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export { numbers, NETWORKS_INFO, FIELD_SIZE, BG_ZERO, ZERO_ADDRESS };
+
+export const CONTRACT_ERRORS = [
+  'Invalid merkle root',
+  'Input is already spent',
+  'Incorrect external data hash',
+  'Invalid fee',
+  'Invalid ext amount',
+  'Invalid public amount',
+  'Invalid transaction proof',
+  "Can't withdraw to zero address",
+];
