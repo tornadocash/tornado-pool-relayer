@@ -33,9 +33,9 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
       const { extData } = job.data;
 
       await this.checkFee({ fee: extData.fee, externalAmount: extData.extAmount });
-      await this.submitTx(job);
+      const txHash = await this.submitTx(job);
 
-      cb(null);
+      cb(null, txHash);
     } catch (err) {
       cb(err);
     }
@@ -88,7 +88,9 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
           await job.update(job.data);
         });
 
-      if (receipt.status !== 1) {
+      if (BigNumber.from(receipt.status).eq(1)) {
+        return receipt.transactionHash;
+      } else {
         throw new Error('Submitted transaction failed');
       }
     } catch (err) {
