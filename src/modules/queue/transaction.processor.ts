@@ -48,13 +48,6 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     await job.update(job.data);
   }
 
-  @OnQueueCompleted()
-  async onCompleted(job: Job) {
-    job.data.status = 'CONFIRMED';
-
-    await job.update(job.data);
-  }
-
   @OnQueueFailed()
   async onFailed(job: Job) {
     job.data.status = 'FAILED';
@@ -89,6 +82,10 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
         });
 
       if (BigNumber.from(receipt.status).eq(1)) {
+        job.data.status = 'CONFIRMED';
+
+        await job.update(job.data);
+
         return receipt.transactionHash;
       } else {
         throw new Error('Submitted transaction failed');
