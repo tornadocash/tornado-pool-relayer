@@ -157,15 +157,8 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     }
   }
 
-  handleError(e) {
-    // Sometimes ethers wraps known errors, unwrap it in this case
-    if (e?.error?.error) {
-      e = e.error;
-    }
-
-    const message = e?.error ? e.error.message : e.message;
-
-    const error = CONTRACT_ERRORS.find((e) => (typeof e === 'string' ? e === message : message.match(e)));
+  handleError({ message }: Error) {
+    const error = CONTRACT_ERRORS.find((knownError) => message.includes(knownError));
 
     if (error) {
       throw new Error(`Revert by smart contract: ${error}`);
