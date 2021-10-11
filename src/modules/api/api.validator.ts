@@ -22,6 +22,7 @@ const bytes32Type = { type: 'string', pattern: '^0x[a-fA-F0-9]{64}$' };
 const externalAmountType = { type: 'string', pattern: '^(0x[a-fA-F0-9]{64}|-0x[a-fA-F0-9]{63})$' };
 const encryptedOutputType = { type: 'string', pattern: '^0x[a-fA-F0-9]{312}$' };
 const arrayType = { type: 'array', items: bytes32Type };
+const booleanType = { type: 'boolean' };
 
 const transactionSchema = {
   type: 'object',
@@ -35,6 +36,7 @@ const transactionSchema = {
         fee: bytes32Type,
         recipient: addressType,
         relayer: addressType,
+        isL1Withdrawal: booleanType,
       },
     },
     args: {

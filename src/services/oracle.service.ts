@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { BigNumber } from 'ethers';
 import { GasPriceOracle } from 'gas-price-oracle';
-import { GasPrice } from 'gas-price-oracle/lib/types';
 
 import { ChainId } from '@/types';
-import { toWei } from '@/utilities';
 import { RPC_LIST, numbers } from '@/constants';
+import { toWei } from '@/utilities';
 
 @Injectable()
 export class GasPriceService {
@@ -16,30 +16,24 @@ export class GasPriceService {
     this.chainId = this.configService.get<number>('base.chainId');
   }
 
-  async getGasPrice(): Promise<GasPrice> {
-    if (this.chainId === ChainId.OPTIMISM) {
-      return GasPriceService.getOptimismPrice();
-    }
-
-    const TIMER = 10;
+  async getGasPrice() {
+    const TIMER = 3;
     const INTERVAL = TIMER * numbers.SECOND;
 
     const instance = new GasPriceOracle({
       timeout: INTERVAL,
-      defaultRpc: RPC_LIST[ChainId.MAINNET],
+      defaultRpc: RPC_LIST[ChainId.XDAI],
     });
 
-    return await instance.gasPrices();
-  }
+    const fast = await instance.fetchGasPriceFromRpc();
 
-  private static getOptimismPrice() {
-    const OPTIMISM_GAS = toWei('0.015', 'gwei').toNumber();
+    const bnGas = BigNumber.from(toWei(String(fast), 'gwei'));
 
     return {
-      fast: OPTIMISM_GAS,
-      low: OPTIMISM_GAS,
-      instant: OPTIMISM_GAS,
-      standard: OPTIMISM_GAS,
+      instant: bnGas.mul(130).div(100).toHexString(),
+      fast: bnGas,
+      standard: bnGas.mul(85).div(100).toHexString(),
+      low: bnGas.mul(50).div(100).toHexString(),
     };
   }
 }

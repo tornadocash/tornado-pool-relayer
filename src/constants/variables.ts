@@ -14,6 +14,10 @@ const NETWORKS_INFO: { [chainId in ChainId] } = {
     gasLimit: '',
     minimumBalance: '0.5',
   },
+  [ChainId.XDAI]: {
+    gasLimit: BigNumber.from(2500000),
+    minimumBalance: '0.5',
+  },
 };
 
 const numbers = {

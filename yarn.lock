@@ -3140,6 +3140,14 @@ gas-price-oracle@^0.3.3:
     axios "^0.19.2"
     bignumber.js "^9.0.0"
 
+gas-price-oracle@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.npmjs.org/gas-price-oracle/-/gas-price-oracle-0.4.0.tgz#1b8426bce92ebcff6cc98a0c5638769cb22417b1"
+  integrity sha512-5ct4VwTqTigD1V3EvUn513e41OIA+/Ubw0FITVfarw7AjVpg4LQSt9anRt+LcDU4+u+eMUEA3VP0VnvMN8nybA==
+  dependencies:
+    axios "^0.19.2"
+    bignumber.js "^9.0.0"
+
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.npmjs.org/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
@@ -5871,14 +5879,9 @@ utils-merge@1.0.1:
   resolved "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@8.3.2, uuid@^8.3.0:
+uuid@8.3.2, uuid@^8.3.0, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
-
-uuid@^8.3.2:
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.3:

@@ -7,12 +7,12 @@ import { ConfigService } from '@nestjs/config';
 import { InjectQueue, Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 
 import { numbers, CONTRACT_ERRORS } from '@/constants';
-import { toWei, getToIntegerMultiplier } from '@/utilities';
+import { getToIntegerMultiplier } from '@/utilities';
 import { GasPriceService, ProviderService } from '@/services';
 import txMangerConfig from '@/config/txManager.config';
 
 import { BaseProcessor } from './base.processor';
-import { ChainId, Transaction } from '@/types';
+import { Transaction } from '@/types';
 @Injectable()
 @Processor('transaction')
 export class TransactionProcessor extends BaseProcessor<Transaction> {
@@ -98,22 +98,11 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
   }
 
   async prepareTransaction({ extData, args }) {
-    const { chainId, address } = this.configService.get('base');
-
     const contract = this.providerService.getTornadoPool();
 
-    const data = contract.interface.encodeFunctionData('transaction', [args, extData]);
+    const data = contract.interface.encodeFunctionData('transact', [args, extData]);
 
     let gasLimit = this.configService.get<BigNumber>('base.gasLimit');
-
-    // need because optimism has dynamic gas limit
-    if (chainId === ChainId.OPTIMISM) {
-      gasLimit = await contract.estimateGas.transaction(args, extData, {
-        from: address,
-        value: BigNumber.from(0)._hex,
-        gasPrice: toWei('0.015', 'gwei'),
-      });
-    }
 
     const { fast } = await this.gasPriceService.getGasPrice();
 
@@ -121,7 +110,7 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
       data,
       gasLimit,
       to: contract.address,
-      gasPrice: toWei(fast.toString(), 'gwei'),
+      gasPrice: fast,
       value: BigNumber.from(0)._hex,
     };
   }
@@ -133,6 +122,7 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     // for withdrawals the amount is negative
     if (amount.isNegative()) {
       const integerMultiplier = getToIntegerMultiplier(serviceFee.withdrawal);
+
       return BigNumber.from(amount)
         .mul(serviceFee.withdrawal * integerMultiplier)
         .div(numbers.ONE_HUNDRED * integerMultiplier);
@@ -146,7 +136,7 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
 
     const { fast } = await this.gasPriceService.getGasPrice();
 
-    const expense = BigNumber.from(toWei(fast.toString(), 'gwei')).mul(gasLimit);
+    const expense = BigNumber.from(fast).mul(gasLimit);
 
     const feePercent = this.getServiceFee(externalAmount);
 

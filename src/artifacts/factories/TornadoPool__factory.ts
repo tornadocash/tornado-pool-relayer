@@ -29,28 +29,29 @@ const _abi = [
         name: "_hasher",
         type: "address",
       },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
+        internalType: "contract IERC6777",
+        name: "_token",
         type: "address",
       },
       {
-        indexed: false,
-        internalType: "bytes",
-        name: "account",
-        type: "bytes",
+        internalType: "address",
+        name: "_omniBridge",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_l1Unwrapper",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_governance",
+        type: "address",
       },
     ],
-    name: "EncryptedAccount",
-    type: "event",
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
     anonymous: false,
@@ -199,6 +200,24 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_minimalWithdrawalAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_maximumDepositAmount",
+        type: "uint256",
+      },
+    ],
+    name: "configureLimits",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "currentRootIndex",
     outputs: [
@@ -244,6 +263,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "governance",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "bytes32",
@@ -281,7 +313,18 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_minimalWithdrawalAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_maximumDepositAmount",
+        type: "uint256",
+      },
+    ],
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
@@ -327,12 +370,64 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "l1Unwrapper",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "levels",
     outputs: [
       {
         internalType: "uint32",
         name: "",
         type: "uint32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "maximumDepositAmount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "minimalWithdrawalAmount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -371,22 +466,58 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "omniBridge",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC6777",
+        name: "_token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "_data",
+        type: "bytes",
+      },
+    ],
+    name: "onTokenBridged",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         components: [
           {
-            internalType: "bytes",
-            name: "pubKey",
-            type: "bytes",
+            internalType: "address",
+            name: "owner",
+            type: "address",
           },
           {
             internalType: "bytes",
-            name: "account",
+            name: "publicKey",
             type: "bytes",
           },
         ],
-        internalType: "struct TornadoPool.Register",
-        name: "args",
+        internalType: "struct TornadoPool.Account",
+        name: "_account",
         type: "tuple",
       },
     ],
@@ -400,18 +531,18 @@ const _abi = [
       {
         components: [
           {
-            internalType: "bytes",
-            name: "pubKey",
-            type: "bytes",
+            internalType: "address",
+            name: "owner",
+            type: "address",
           },
           {
             internalType: "bytes",
-            name: "account",
+            name: "publicKey",
             type: "bytes",
           },
         ],
-        internalType: "struct TornadoPool.Register",
-        name: "_registerArgs",
+        internalType: "struct TornadoPool.Account",
+        name: "_account",
         type: "tuple",
       },
       {
@@ -454,7 +585,7 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address payable",
+            internalType: "address",
             name: "recipient",
             type: "address",
           },
@@ -464,7 +595,7 @@ const _abi = [
             type: "int256",
           },
           {
-            internalType: "address payable",
+            internalType: "address",
             name: "relayer",
             type: "address",
           },
@@ -483,6 +614,11 @@ const _abi = [
             name: "encryptedOutput2",
             type: "bytes",
           },
+          {
+            internalType: "bool",
+            name: "isL1Withdrawal",
+            type: "bool",
+          },
         ],
         internalType: "struct TornadoPool.ExtData",
         name: "_extData",
@@ -491,7 +627,7 @@ const _abi = [
     ],
     name: "registerAndTransact",
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -508,6 +644,19 @@ const _abi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "token",
+    outputs: [
+      {
+        internalType: "contract IERC6777",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -555,7 +704,7 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address payable",
+            internalType: "address",
             name: "recipient",
             type: "address",
           },
@@ -565,7 +714,7 @@ const _abi = [
             type: "int256",
           },
           {
-            internalType: "address payable",
+            internalType: "address",
             name: "relayer",
             type: "address",
           },
@@ -584,15 +733,20 @@ const _abi = [
             name: "encryptedOutput2",
             type: "bytes",
           },
+          {
+            internalType: "bool",
+            name: "isL1Withdrawal",
+            type: "bool",
+          },
         ],
         internalType: "struct TornadoPool.ExtData",
         name: "_extData",
         type: "tuple",
       },
     ],
-    name: "transaction",
+    name: "transact",
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
