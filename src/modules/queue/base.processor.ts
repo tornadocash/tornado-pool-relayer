@@ -53,7 +53,7 @@ export class BaseProcessor<T = object> implements OnModuleDestroy {
     return this.updateTask(job);
   }
 
-  private async updateTask(job: Job<T>) {
+  protected async updateTask(job: Job<T>) {
     const currentJob = await this.queue.getJob(job.id);
     await currentJob.update(job.data);
   }
