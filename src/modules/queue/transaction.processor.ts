@@ -7,9 +7,10 @@ import { ConfigService } from '@nestjs/config';
 import { InjectQueue, Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 
 import { Transaction } from '@/types';
+import { getToIntegerMultiplier, toWei } from '@/utilities';
 import { numbers, CONTRACT_ERRORS, jobStatus } from '@/constants';
-import { getToIntegerMultiplier } from '@/utilities';
-import { GasPriceService, ProviderService } from '@/services';
+import { GasPriceService, ProviderService, OffchainPriceService } from '@/services';
+
 import txMangerConfig from '@/config/txManager.config';
 
 import { BaseProcessor } from './base.processor';
@@ -19,9 +20,10 @@ import { BaseProcessor } from './base.processor';
 export class TransactionProcessor extends BaseProcessor<Transaction> {
   constructor(
     @InjectQueue('transaction') public transactionQueue: Queue,
+    private configService: ConfigService,
     private gasPriceService: GasPriceService,
     private providerService: ProviderService,
-    private configService: ConfigService,
+    private offChainPriceService: OffchainPriceService,
   ) {
     super();
     this.queueName = 'transaction';
@@ -132,13 +134,15 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
 
   async checkFee({ fee, externalAmount }) {
     const { gasLimit } = this.configService.get('base');
-
     const { fast } = await this.gasPriceService.getGasPrice();
 
-    const expense = BigNumber.from(fast).mul(gasLimit);
+    const operationFee = BigNumber.from(fast).mul(gasLimit);
 
     const feePercent = this.getServiceFee(externalAmount);
 
+    const ethPrice = await this.offChainPriceService.getDaiEthPrice();
+
+    const expense = operationFee.mul(ethPrice).div(toWei('1'));
     const desiredFee = expense.add(feePercent);
 
     if (BigNumber.from(fee).lt(desiredFee)) {

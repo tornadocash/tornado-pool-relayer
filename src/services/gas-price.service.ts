@@ -30,8 +30,8 @@ export class GasPriceService {
     const bnGas = BigNumber.from(toWei(String(fast), 'gwei'));
 
     return {
-      instant: bnGas.mul(130).div(100).toHexString(),
-      fast: bnGas,
+      instant: bnGas.mul(150).div(100).toHexString(),
+      fast: bnGas.mul(130).div(100).toHexString(),
       standard: bnGas.mul(85).div(100).toHexString(),
       low: bnGas.mul(50).div(100).toHexString(),
     };

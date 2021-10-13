@@ -7,6 +7,7 @@ import { ProviderService } from '@/services';
 import { ConfigService } from '@nestjs/config';
 
 import { Transaction } from '@/types';
+
 @Injectable()
 class ApiService {
   constructor(

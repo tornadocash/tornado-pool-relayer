@@ -2,8 +2,9 @@ import { ethers } from 'ethers';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { CONTRACT_NETWORKS, RPC_LIST } from '@/constants';
-import { TornadoPool__factory as TornadoPoolFactory } from '@/artifacts';
+import { ChainId } from '@/types';
+import { CONTRACT_NETWORKS, OFF_CHAIN_ORACLE, RPC_LIST } from '@/constants';
+import { TornadoPool__factory as TornadoPool, OffchainOracle__factory as OffchainOracle } from '@/artifacts';
 
 @Injectable()
 export class ProviderService {
@@ -20,7 +21,12 @@ export class ProviderService {
   }
 
   getTornadoPool() {
-    return TornadoPoolFactory.connect(CONTRACT_NETWORKS[this.chainId], this.getProviderWithSigner());
+    return TornadoPool.connect(CONTRACT_NETWORKS[this.chainId], this.getProviderWithSigner());
+  }
+
+  getOffChainOracle() {
+    const provider = ethers.providers.getDefaultProvider(RPC_LIST[ChainId.MAINNET]);
+    return OffchainOracle.connect(OFF_CHAIN_ORACLE, provider);
   }
 
   async checkSenderBalance() {
