@@ -4,9 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { BigNumber } from 'ethers';
 import { GasPriceOracle } from 'gas-price-oracle';
 
-import { ChainId } from '@/types';
-import { RPC_LIST, numbers } from '@/constants';
 import { toWei } from '@/utilities';
+import { RPC_LIST } from '@/constants';
 
 @Injectable()
 export class GasPriceService {
@@ -17,12 +16,9 @@ export class GasPriceService {
   }
 
   async getGasPrice() {
-    const TIMER = 3;
-    const INTERVAL = TIMER * numbers.SECOND;
-
     const instance = new GasPriceOracle({
-      timeout: INTERVAL,
-      defaultRpc: RPC_LIST[ChainId.XDAI],
+      chainId: this.chainId,
+      defaultRpc: RPC_LIST[this.chainId],
     });
 
     const fast = await instance.fetchGasPriceFromRpc();
