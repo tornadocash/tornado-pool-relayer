@@ -103,7 +103,7 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
 
     const data = contract.interface.encodeFunctionData('transact', [args, extData]);
 
-    let gasLimit = this.configService.get<BigNumber>('base.gasLimit');
+    const gasLimit = this.configService.get<BigNumber>('base.gasLimit');
 
     const { fast } = await this.gasPriceService.getGasPrice();
 

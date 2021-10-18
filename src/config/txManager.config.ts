@@ -9,4 +9,7 @@ export default registerAs('txManager', () => ({
     CONFIRMATIONS: process.env.CONFIRMATIONS,
     MAX_GAS_PRICE: process.env.MAX_GAS_PRICE,
   },
+  gasPriceOracleConfig: {
+    chainId: Number(process.env.CHAIN_ID),
+  },
 }));

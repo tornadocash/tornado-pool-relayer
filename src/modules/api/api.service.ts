@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 
+import { jobStatus } from '@/constants';
 import { ProviderService } from '@/services';
 import { ConfigService } from '@nestjs/config';
 
@@ -37,7 +38,7 @@ class ApiService {
   async transaction(data: any): Promise<string> {
     const jobId = uuid();
 
-    await this.transactionQueue.add({ ...data, status: 'QUEUED' }, { jobId });
+    await this.transactionQueue.add({ ...data, status: jobStatus.QUEUED }, { jobId });
 
     return jobId;
   }

@@ -11,7 +11,7 @@ export const RPC_LIST: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: 'https://mainnet.infura.io/v3/eb6a84e726614079948e0b1efce5baa5',
   [ChainId.GOERLI]: 'https://eth-goerli.alchemyapi.io/v2/hlSj0EqPUuLGyyTExs6UqFKnXDrc_eOh',
   [ChainId.OPTIMISM]: 'https://optimism-kovan.infura.io/v3/8f786b96d16046b78e0287fa61c6fcf8',
-  [ChainId.XDAI]: 'https://rpc.xdaichain.com',
+  [ChainId.XDAI]: 'https://xdai-rpc.ztake.org',
 };
 
 export const OFF_CHAIN_ORACLE = '0x07D91f5fb9Bf7798734C3f606dB065549F6893bb';
