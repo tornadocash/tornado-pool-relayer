@@ -7,6 +7,16 @@ import { GasPriceOracle } from 'gas-price-oracle';
 import { toWei } from '@/utilities';
 import { RPC_LIST } from '@/constants';
 
+const bump = (gas: BigNumber, percent: number) => gas.mul(percent).div(100).toHexString();
+const gweiToWei = (value: number) => toWei(String(value), 'gwei');
+
+const percentBump = {
+  INSTANT: 150,
+  FAST: 130,
+  STANDARD: 85,
+  LOW: 50,
+};
+
 @Injectable()
 export class GasPriceService {
   private readonly chainId: number;
@@ -21,15 +31,13 @@ export class GasPriceService {
       defaultRpc: RPC_LIST[this.chainId],
     });
 
-    const fast = await instance.fetchGasPriceFromRpc();
-
-    const bnGas = BigNumber.from(toWei(String(fast), 'gwei'));
+    const result = await instance.gasPrices();
 
     return {
-      instant: bnGas.mul(150).div(100).toHexString(),
-      fast: bnGas.mul(130).div(100).toHexString(),
-      standard: bnGas.mul(85).div(100).toHexString(),
-      low: bnGas.mul(50).div(100).toHexString(),
+      instant: bump(gweiToWei(result.instant), percentBump.INSTANT),
+      fast: bump(gweiToWei(result.instant), percentBump.FAST),
+      standard: bump(gweiToWei(result.standard), percentBump.STANDARD),
+      low: bump(gweiToWei(result.low), percentBump.LOW),
     };
   }
 }
