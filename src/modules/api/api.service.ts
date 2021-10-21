@@ -3,9 +3,9 @@ import { v4 as uuid } from 'uuid';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 
-import { jobStatus } from '@/constants';
 import { ProviderService } from '@/services';
 import { ConfigService } from '@nestjs/config';
+import { jobStatus, NETWORKS_INFO } from '@/constants';
 
 import { Transaction } from '@/types';
 
@@ -25,9 +25,9 @@ class ApiService {
     return {
       health,
       version,
+      chainId,
       serviceFee,
       rewardAddress,
-      chainId: Number(chainId),
     };
   }
 
@@ -59,11 +59,11 @@ class ApiService {
   private async healthCheck(): Promise<Health> {
     const status = await this.providerService.checkSenderBalance();
 
-    const minimumBalance = this.configService.get('base.minimumBalance');
+    const { chainId, minimumBalance } = this.configService.get('base');
 
     return {
       status,
-      error: status ? '' : `Not enough balance, less than ${minimumBalance} ETH`,
+      error: status ? '' : `Not enough balance, less than ${minimumBalance} ${NETWORKS_INFO[chainId].symbol}`,
     };
   }
 }

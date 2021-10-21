@@ -9,23 +9,31 @@ import { TornadoPool__factory as TornadoPool, OffchainOracle__factory as Offchai
 @Injectable()
 export class ProviderService {
   private readonly chainId: number;
-  public provider: ethers.providers.JsonRpcProvider;
+  private readonly providers: Map<ChainId, ethers.providers.StaticJsonRpcProvider> = new Map();
 
   constructor(private configService: ConfigService) {
     this.chainId = this.configService.get<number>('base.chainId');
-    this.provider = new ethers.providers.JsonRpcProvider(RPC_LIST[this.chainId]);
   }
 
-  getProviderWithSigner() {
-    return ethers.providers.getDefaultProvider(RPC_LIST[this.chainId]);
+  get provider() {
+    return this.getProvider(this.chainId);
+  }
+
+  getProvider(chainId: ChainId) {
+    if (!this.providers.has(chainId)) {
+      this.providers.set(chainId, new ethers.providers.StaticJsonRpcProvider(RPC_LIST[chainId], chainId));
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.providers.get(chainId)!;
   }
 
   getTornadoPool() {
-    return TornadoPool.connect(CONTRACT_NETWORKS[this.chainId], this.getProviderWithSigner());
+    return TornadoPool.connect(CONTRACT_NETWORKS[this.chainId], this.provider);
   }
 
   getOffChainOracle() {
-    const provider = ethers.providers.getDefaultProvider(RPC_LIST[ChainId.MAINNET]);
+    const provider = this.getProvider(ChainId.MAINNET);
     return OffchainOracle.connect(OFF_CHAIN_ORACLE, provider);
   }
 
