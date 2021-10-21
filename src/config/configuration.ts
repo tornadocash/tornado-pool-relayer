@@ -8,7 +8,7 @@ export const baseConfig = () => ({
   base: {
     version,
     port: process.env.PORT,
-    chainId: process.env.CHAIN_ID,
+    chainId: Number(process.env.CHAIN_ID),
     serviceFee: {
       transfer: toWei(process.env.TRANSFER_SERVICE_FEE).toString(),
       withdrawal: Number(process.env.WITHDRAWAL_SERVICE_FEE),

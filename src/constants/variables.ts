@@ -3,18 +3,22 @@ import { ChainId } from '@/types';
 
 const NETWORKS_INFO: { [chainId in ChainId] } = {
   [ChainId.MAINNET]: {
+    symbol: 'ETH',
     gasLimit: BigNumber.from(1500000),
     minimumBalance: '0.5',
   },
   [ChainId.GOERLI]: {
+    symbol: 'gETH',
     gasLimit: BigNumber.from(1500000),
     minimumBalance: '0.5',
   },
   [ChainId.OPTIMISM]: {
+    symbol: 'ETH',
     gasLimit: '',
     minimumBalance: '0.5',
   },
   [ChainId.XDAI]: {
+    symbol: 'xDAI',
     gasLimit: BigNumber.from(2000000),
     minimumBalance: '0.5',
   },
