@@ -4,7 +4,7 @@ export const CONTRACT_NETWORKS: { [chainId in ChainId]: string } = {
   // [ChainId.MAINNET]: '0x8Bfac9EF3d73cE08C7CEC339C0fE3B2e57814c1E',
   [ChainId.GOERLI]: '0xE2D9aF526edeB16a02FBC3B68B0eB9B534f9c114',
   [ChainId.OPTIMISM]: '0xcd7318c299A82E887f5180EF865a4c350dFC9fe5',
-  [ChainId.XDAI]: '0x4d701A6EE8c13D3AB0d2CE4dfA773c04fa4C5933',
+  [ChainId.XDAI]: '0xdd85b1dbE3379AFA37F703822f9E328d4bAf8625',
 };
 
 export const RPC_LIST: { [chainId in ChainId]: string } = {
