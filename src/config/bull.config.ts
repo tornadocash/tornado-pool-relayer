@@ -1,11 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('bull', () => ({
-  name: 'transaction',
-  redis: {
-    host: process.env.NODE_ENV === 'development' ? 'localhost' : 'redis',
-    port: 6379,
-  },
+  redis: process.env.REDIS_URL || 'localhost',
   settings: {
     lockDuration: 300000,
     lockRenewTime: 30000,
