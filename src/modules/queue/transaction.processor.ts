@@ -157,6 +157,8 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
       throw new Error(`Revert by smart contract: ${error}`);
     }
 
+    console.log('handleError:', message);
+
     throw new Error('Relayer did not send your transaction. Please choose a different relayer.');
   }
 }
