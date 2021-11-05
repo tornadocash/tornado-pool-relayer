@@ -5,7 +5,7 @@ export const CONTRACT_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.GOERLI]: '0xE2D9aF526edeB16a02FBC3B68B0eB9B534f9c114',
   [ChainId.OPTIMISM]: '0xcd7318c299A82E887f5180EF865a4c350dFC9fe5',
   // [ChainId.XDAI]: '0xdd85b1dbE3379AFA37F703822f9E328d4bAf8625', // BNB
-  [ChainId.XDAI]: '0xbA41BDf9fB0015ed852F9f221176C48FD9158B43', // ETH
+  [ChainId.XDAI]: '0xBCc3689369f18916FBEB4B547BAB1488CC46290B', // ETH
 };
 
 export const RPC_LIST: { [chainId in ChainId]: string } = {
