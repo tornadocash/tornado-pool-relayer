@@ -49,6 +49,16 @@ const _abi = [
         name: "_governance",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "_l1ChainId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_multisig",
+        type: "address",
+      },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -176,6 +186,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "ambBridge",
+    outputs: [
+      {
+        internalType: "contract IAMB",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "int256",
@@ -263,19 +286,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "governance",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "bytes32",
@@ -327,6 +337,19 @@ const _abi = [
     ],
     name: "initialize",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isCalledByOwner",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -435,6 +458,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "multisig",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "nextIndex",
     outputs: [
       {
@@ -499,6 +535,119 @@ const _abi = [
     name: "onTokenBridged",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "bytes",
+            name: "proof",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes32",
+            name: "root",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32[]",
+            name: "inputNullifiers",
+            type: "bytes32[]",
+          },
+          {
+            internalType: "bytes32[2]",
+            name: "outputCommitments",
+            type: "bytes32[2]",
+          },
+          {
+            internalType: "uint256",
+            name: "publicAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "extDataHash",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct TornadoPool.Proof",
+        name: "_args",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "recipient",
+            type: "address",
+          },
+          {
+            internalType: "int256",
+            name: "extAmount",
+            type: "int256",
+          },
+          {
+            internalType: "address",
+            name: "relayer",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "fee",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes",
+            name: "encryptedOutput1",
+            type: "bytes",
+          },
+          {
+            internalType: "bytes",
+            name: "encryptedOutput2",
+            type: "bytes",
+          },
+          {
+            internalType: "bool",
+            name: "isL1Withdrawal",
+            type: "bool",
+          },
+        ],
+        internalType: "struct TornadoPool.ExtData",
+        name: "_extData",
+        type: "tuple",
+      },
+    ],
+    name: "onTransact",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "ownerChainId",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -626,6 +775,29 @@ const _abi = [
       },
     ],
     name: "registerAndTransact",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC6777",
+        name: "_token",
+        type: "address",
+      },
+      {
+        internalType: "address payable",
+        name: "_to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_balance",
+        type: "uint256",
+      },
+    ],
+    name: "rescueTokens",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

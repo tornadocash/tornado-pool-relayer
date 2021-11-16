@@ -26,15 +26,16 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     "MAX_FEE()": FunctionFragment;
     "ROOT_HISTORY_SIZE()": FunctionFragment;
     "ZERO_VALUE()": FunctionFragment;
+    "ambBridge()": FunctionFragment;
     "calculatePublicAmount(int256,uint256)": FunctionFragment;
     "configureLimits(uint256,uint256)": FunctionFragment;
     "currentRootIndex()": FunctionFragment;
     "filledSubtrees(uint256)": FunctionFragment;
     "getLastRoot()": FunctionFragment;
-    "governance()": FunctionFragment;
     "hashLeftRight(bytes32,bytes32)": FunctionFragment;
     "hasher()": FunctionFragment;
     "initialize(uint256,uint256)": FunctionFragment;
+    "isCalledByOwner()": FunctionFragment;
     "isKnownRoot(bytes32)": FunctionFragment;
     "isSpent(bytes32)": FunctionFragment;
     "l1Unwrapper()": FunctionFragment;
@@ -42,12 +43,17 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     "levels()": FunctionFragment;
     "maximumDepositAmount()": FunctionFragment;
     "minimalWithdrawalAmount()": FunctionFragment;
+    "multisig()": FunctionFragment;
     "nextIndex()": FunctionFragment;
     "nullifierHashes(bytes32)": FunctionFragment;
     "omniBridge()": FunctionFragment;
     "onTokenBridged(address,uint256,bytes)": FunctionFragment;
+    "onTransact(tuple,tuple)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "ownerChainId()": FunctionFragment;
     "register(tuple)": FunctionFragment;
     "registerAndTransact(tuple,tuple,tuple)": FunctionFragment;
+    "rescueTokens(address,address,uint256)": FunctionFragment;
     "roots(uint256)": FunctionFragment;
     "token()": FunctionFragment;
     "transact(tuple,tuple)": FunctionFragment;
@@ -74,6 +80,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "ZERO_VALUE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "ambBridge", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "calculatePublicAmount",
     values: [BigNumberish, BigNumberish]
@@ -95,10 +102,6 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "governance",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "hashLeftRight",
     values: [BytesLike, BytesLike]
   ): string;
@@ -106,6 +109,10 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isCalledByOwner",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "isKnownRoot",
@@ -129,6 +136,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "minimalWithdrawalAmount",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "multisig", values?: undefined): string;
   encodeFunctionData(functionFragment: "nextIndex", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "nullifierHashes",
@@ -141,6 +149,33 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "onTokenBridged",
     values: [string, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onTransact",
+    values: [
+      {
+        proof: BytesLike;
+        root: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        publicAmount: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      {
+        recipient: string;
+        extAmount: BigNumberish;
+        relayer: string;
+        fee: BigNumberish;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+        isL1Withdrawal: boolean;
+      }
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ownerChainId",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "register",
@@ -168,6 +203,10 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
         isL1Withdrawal: boolean;
       }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rescueTokens",
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "roots", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
@@ -224,6 +263,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "ZERO_VALUE", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ambBridge", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calculatePublicAmount",
     data: BytesLike
@@ -244,13 +284,16 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "getLastRoot",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "governance", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "hashLeftRight",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "hasher", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isCalledByOwner",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "isKnownRoot",
     data: BytesLike
@@ -273,6 +316,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "minimalWithdrawalAmount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "multisig", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nextIndex", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nullifierHashes",
@@ -283,9 +327,19 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     functionFragment: "onTokenBridged",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "onTransact", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ownerChainId",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "registerAndTransact",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rescueTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "roots", data: BytesLike): Result;
@@ -364,6 +418,8 @@ export class TornadoPool extends BaseContract {
 
     ZERO_VALUE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    ambBridge(overrides?: CallOverrides): Promise<[string]>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
@@ -385,8 +441,6 @@ export class TornadoPool extends BaseContract {
 
     getLastRoot(overrides?: CallOverrides): Promise<[string]>;
 
-    governance(overrides?: CallOverrides): Promise<[string]>;
-
     hashLeftRight(
       _left: BytesLike,
       _right: BytesLike,
@@ -398,6 +452,10 @@ export class TornadoPool extends BaseContract {
     initialize(
       _minimalWithdrawalAmount: BigNumberish,
       _maximumDepositAmount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    isCalledByOwner(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -421,6 +479,8 @@ export class TornadoPool extends BaseContract {
 
     minimalWithdrawalAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    multisig(overrides?: CallOverrides): Promise<[string]>;
+
     nextIndex(overrides?: CallOverrides): Promise<[number]>;
 
     nullifierHashes(
@@ -436,6 +496,31 @@ export class TornadoPool extends BaseContract {
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    onTransact(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        publicAmount: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        extAmount: BigNumberish;
+        relayer: string;
+        fee: BigNumberish;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+        isL1Withdrawal: boolean;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    ownerChainId(overrides?: CallOverrides): Promise<[string]>;
 
     register(
       _account: { owner: string; publicKey: BytesLike },
@@ -461,6 +546,13 @@ export class TornadoPool extends BaseContract {
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
       },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    rescueTokens(
+      _token: string,
+      _to: string,
+      _balance: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -518,6 +610,8 @@ export class TornadoPool extends BaseContract {
 
   ZERO_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
 
+  ambBridge(overrides?: CallOverrides): Promise<string>;
+
   calculatePublicAmount(
     _extAmount: BigNumberish,
     _fee: BigNumberish,
@@ -539,8 +633,6 @@ export class TornadoPool extends BaseContract {
 
   getLastRoot(overrides?: CallOverrides): Promise<string>;
 
-  governance(overrides?: CallOverrides): Promise<string>;
-
   hashLeftRight(
     _left: BytesLike,
     _right: BytesLike,
@@ -552,6 +644,10 @@ export class TornadoPool extends BaseContract {
   initialize(
     _minimalWithdrawalAmount: BigNumberish,
     _maximumDepositAmount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  isCalledByOwner(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -572,6 +668,8 @@ export class TornadoPool extends BaseContract {
 
   minimalWithdrawalAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
+  multisig(overrides?: CallOverrides): Promise<string>;
+
   nextIndex(overrides?: CallOverrides): Promise<number>;
 
   nullifierHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
@@ -584,6 +682,31 @@ export class TornadoPool extends BaseContract {
     _data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  onTransact(
+    _args: {
+      proof: BytesLike;
+      root: BytesLike;
+      inputNullifiers: BytesLike[];
+      outputCommitments: [BytesLike, BytesLike];
+      publicAmount: BigNumberish;
+      extDataHash: BytesLike;
+    },
+    _extData: {
+      recipient: string;
+      extAmount: BigNumberish;
+      relayer: string;
+      fee: BigNumberish;
+      encryptedOutput1: BytesLike;
+      encryptedOutput2: BytesLike;
+      isL1Withdrawal: boolean;
+    },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  ownerChainId(overrides?: CallOverrides): Promise<string>;
 
   register(
     _account: { owner: string; publicKey: BytesLike },
@@ -609,6 +732,13 @@ export class TornadoPool extends BaseContract {
       encryptedOutput2: BytesLike;
       isL1Withdrawal: boolean;
     },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  rescueTokens(
+    _token: string,
+    _to: string,
+    _balance: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -666,6 +796,8 @@ export class TornadoPool extends BaseContract {
 
     ZERO_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ambBridge(overrides?: CallOverrides): Promise<string>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
@@ -687,8 +819,6 @@ export class TornadoPool extends BaseContract {
 
     getLastRoot(overrides?: CallOverrides): Promise<string>;
 
-    governance(overrides?: CallOverrides): Promise<string>;
-
     hashLeftRight(
       _left: BytesLike,
       _right: BytesLike,
@@ -702,6 +832,8 @@ export class TornadoPool extends BaseContract {
       _maximumDepositAmount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isCalledByOwner(overrides?: CallOverrides): Promise<boolean>;
 
     isKnownRoot(_root: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
@@ -720,6 +852,8 @@ export class TornadoPool extends BaseContract {
 
     minimalWithdrawalAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    multisig(overrides?: CallOverrides): Promise<string>;
+
     nextIndex(overrides?: CallOverrides): Promise<number>;
 
     nullifierHashes(
@@ -735,6 +869,31 @@ export class TornadoPool extends BaseContract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    onTransact(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        publicAmount: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        extAmount: BigNumberish;
+        relayer: string;
+        fee: BigNumberish;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+        isL1Withdrawal: boolean;
+      },
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    ownerChainId(overrides?: CallOverrides): Promise<string>;
 
     register(
       _account: { owner: string; publicKey: BytesLike },
@@ -760,6 +919,13 @@ export class TornadoPool extends BaseContract {
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
       },
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rescueTokens(
+      _token: string,
+      _to: string,
+      _balance: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -838,6 +1004,8 @@ export class TornadoPool extends BaseContract {
 
     ZERO_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ambBridge(overrides?: CallOverrides): Promise<BigNumber>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
@@ -859,8 +1027,6 @@ export class TornadoPool extends BaseContract {
 
     getLastRoot(overrides?: CallOverrides): Promise<BigNumber>;
 
-    governance(overrides?: CallOverrides): Promise<BigNumber>;
-
     hashLeftRight(
       _left: BytesLike,
       _right: BytesLike,
@@ -872,6 +1038,10 @@ export class TornadoPool extends BaseContract {
     initialize(
       _minimalWithdrawalAmount: BigNumberish,
       _maximumDepositAmount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    isCalledByOwner(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -895,6 +1065,8 @@ export class TornadoPool extends BaseContract {
 
     minimalWithdrawalAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    multisig(overrides?: CallOverrides): Promise<BigNumber>;
+
     nextIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     nullifierHashes(
@@ -910,6 +1082,31 @@ export class TornadoPool extends BaseContract {
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    onTransact(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        publicAmount: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        extAmount: BigNumberish;
+        relayer: string;
+        fee: BigNumberish;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+        isL1Withdrawal: boolean;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownerChainId(overrides?: CallOverrides): Promise<BigNumber>;
 
     register(
       _account: { owner: string; publicKey: BytesLike },
@@ -935,6 +1132,13 @@ export class TornadoPool extends BaseContract {
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
       },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    rescueTokens(
+      _token: string,
+      _to: string,
+      _balance: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -993,6 +1197,8 @@ export class TornadoPool extends BaseContract {
 
     ZERO_VALUE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    ambBridge(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     calculatePublicAmount(
       _extAmount: BigNumberish,
       _fee: BigNumberish,
@@ -1014,8 +1220,6 @@ export class TornadoPool extends BaseContract {
 
     getLastRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    governance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     hashLeftRight(
       _left: BytesLike,
       _right: BytesLike,
@@ -1027,6 +1231,10 @@ export class TornadoPool extends BaseContract {
     initialize(
       _minimalWithdrawalAmount: BigNumberish,
       _maximumDepositAmount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isCalledByOwner(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1054,6 +1262,8 @@ export class TornadoPool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    multisig(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     nextIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nullifierHashes(
@@ -1069,6 +1279,31 @@ export class TornadoPool extends BaseContract {
       _data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    onTransact(
+      _args: {
+        proof: BytesLike;
+        root: BytesLike;
+        inputNullifiers: BytesLike[];
+        outputCommitments: [BytesLike, BytesLike];
+        publicAmount: BigNumberish;
+        extDataHash: BytesLike;
+      },
+      _extData: {
+        recipient: string;
+        extAmount: BigNumberish;
+        relayer: string;
+        fee: BigNumberish;
+        encryptedOutput1: BytesLike;
+        encryptedOutput2: BytesLike;
+        isL1Withdrawal: boolean;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownerChainId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     register(
       _account: { owner: string; publicKey: BytesLike },
@@ -1094,6 +1329,13 @@ export class TornadoPool extends BaseContract {
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
       },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    rescueTokens(
+      _token: string,
+      _to: string,
+      _balance: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
