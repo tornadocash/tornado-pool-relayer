@@ -33,12 +33,12 @@
     "bull": "^3.22.11",
     "class-validator": "^0.13.1",
     "ethers": "^5.4.6",
-    "gas-price-oracle": "^0.4.0",
+    "gas-price-oracle": "^0.4.4",
     "redis": "^3.1.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "tx-manager": "^0.4.2",
+    "tx-manager": "^0.4.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

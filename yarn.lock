@@ -1852,12 +1852,12 @@ axios@0.21.1:
   dependencies:
     follow-redirects "^1.10.0"
 
-axios@^0.19.2:
-  version "0.19.2"
-  resolved "https://registry.npmjs.org/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
-  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+axios@^0.21.2:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
   dependencies:
-    follow-redirects "1.5.10"
+    follow-redirects "^1.14.0"
 
 babel-jest@^27.0.6:
   version "27.0.6"
@@ -2429,13 +2429,6 @@ debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1:
   integrity sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==
   dependencies:
     ms "2.1.2"
-
-debug@=3.1.0:
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
-  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
-  dependencies:
-    ms "2.0.0"
 
 debuglog@^1.0.0:
   version "1.0.1"
@@ -3084,17 +3077,15 @@ flatted@^3.1.0:
   resolved "https://registry.npmjs.org/flatted/-/flatted-3.2.1.tgz#bbef080d95fca6709362c73044a1634f7c6e7d05"
   integrity sha512-OMQjaErSFHmHqZe+PSidH5n8j3O0F2DdnVh8JB4j4eUQ2k6KvB0qGfrKIhapvez5JerBbmWkaLYUYWISaESoXg==
 
-follow-redirects@1.5.10:
-  version "1.5.10"
-  resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
-  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
-  dependencies:
-    debug "=3.1.0"
-
 follow-redirects@^1.10.0:
   version "1.14.1"
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.14.1.tgz#d9114ded0a1cfdd334e164e6662ad02bfd91ff43"
   integrity sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==
+
+follow-redirects@^1.14.0:
+  version "1.14.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.5.tgz#f09a5848981d3c772b5392309778523f8d85c381"
+  integrity sha512-wtphSXy7d4/OR+MvIFbCVBDzZ5520qV8XfPklSN5QtxuMUJZ+b0Wnst1e1lCDocfzuCkHqj8k0FpZqO+UIaKNA==
 
 for-each@^0.3.3:
   version "0.3.3"
@@ -3199,12 +3190,12 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.npmjs.org/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-gas-price-oracle@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/gas-price-oracle/-/gas-price-oracle-0.4.0.tgz#1b8426bce92ebcff6cc98a0c5638769cb22417b1"
-  integrity sha512-5ct4VwTqTigD1V3EvUn513e41OIA+/Ubw0FITVfarw7AjVpg4LQSt9anRt+LcDU4+u+eMUEA3VP0VnvMN8nybA==
+gas-price-oracle@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/gas-price-oracle/-/gas-price-oracle-0.4.4.tgz#9b7e5583ed7126a68f9d230b9efbd9d75d864bad"
+  integrity sha512-alAHLiZmPJ+GxKvujZZzEY8NRPqgGGHmDQUPFTa6HAMFB4LR/T6ShTDbqQzsdeWLPSw/j8/Gux0ZSC2AsPK+Hg==
   dependencies:
-    axios "^0.19.2"
+    axios "^0.21.2"
     bignumber.js "^9.0.0"
 
 gensync@^1.0.0-beta.2:
@@ -5800,14 +5791,14 @@ tsutils@^3.21.0:
   dependencies:
     tslib "^1.8.1"
 
-tx-manager@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/tx-manager/-/tx-manager-0.4.2.tgz#117e5da2e720f2389492f51a1cb99f1316dfd894"
-  integrity sha512-3Q9eNA9lPFvAp32oqINRA3d5L5r9Gxxb5vIfyou5dJ7YTyIaqO37MEqHkNXxpKIcmPK6KM9j8iPIheg3lwvpAA==
+tx-manager@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/tx-manager/-/tx-manager-0.4.5.tgz#a1fb64abc6f503ac1f6f43795e6915b70c028aba"
+  integrity sha512-5cG4YUzGG2hB8Sw1SQLbAIQVpMyPBWOrn1zpRe3QKo/gMUbf7JHT7fsK2Gr4m+O6wkd59c/hDgu6QZwZW9VKww==
   dependencies:
     async-mutex "^0.2.4"
     ethers "^5.4.6"
-    gas-price-oracle "^0.4.0"
+    gas-price-oracle "^0.4.4"
     web3-core-promievent "^1.3.0"
 
 type-check@^0.4.0, type-check@~0.4.0:
