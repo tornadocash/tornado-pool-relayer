@@ -122,11 +122,9 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
 
     // for withdrawals the amount is negative
     if (amount.isNegative()) {
-      const integerMultiplier = getToIntegerMultiplier(serviceFee.withdrawal);
+      const oneEther = getToIntegerMultiplier();
 
-      return BigNumber.from(amount)
-        .mul(serviceFee.withdrawal * integerMultiplier)
-        .div(numbers.ONE_HUNDRED * integerMultiplier);
+      return amount.mul(toWei(serviceFee.withdrawal)).div(oneEther);
     }
 
     return serviceFee.transfer;

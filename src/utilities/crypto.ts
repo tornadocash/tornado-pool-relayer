@@ -11,7 +11,7 @@ export function toChecksumAddress(value: string): string {
 }
 
 export function toWei(value: string, uintName = 'ether') {
-  return utils.parseUnits(value, uintName);
+  return utils.parseUnits(String(value), uintName);
 }
 
 export function hexToNumber(hex: string) {
@@ -26,12 +26,6 @@ export function fromWei(balance: BigNumberish) {
   return utils.formatUnits(balance, numbers.ETH_DECIMALS);
 }
 
-export function getToIntegerMultiplier(value: number | string): number {
-  const [, decimals] = String(value).split('.');
-
-  if (!decimals) {
-    return numbers.ZERO;
-  }
-
-  return Math.pow(numbers.TEN, decimals.length);
+export function getToIntegerMultiplier(): BigNumber {
+  return toWei('1', 'ether');
 }
