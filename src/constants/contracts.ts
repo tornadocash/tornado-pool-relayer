@@ -1,8 +1,7 @@
 import { ChainId } from '@/types';
 
 export const CONTRACT_NETWORKS: { [chainId in ChainId]: string } = {
-  // [ChainId.XDAI]: '0xE6DdD048304053Bf6ba258D47937289574971057', // BNB
-  [ChainId.XDAI]: '0x9719570C85c93a74c72B5B2c08AA133fcBc35377', // ETH
+  [ChainId.XDAI]: '0xD692Fd2D0b2Fbd2e52CFa5B5b9424bC981C30696', // ETH
 };
 
 export const RPC_LIST: { [chainId in ChainId]: string } = {
