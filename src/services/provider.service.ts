@@ -3,25 +3,27 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { ChainId } from '@/types';
-import { CONTRACT_NETWORKS, OFF_CHAIN_ORACLE, RPC_LIST } from '@/constants';
+import { CONTRACT_NETWORKS, OFF_CHAIN_ORACLE } from '@/constants';
 import { TornadoPool__factory as TornadoPool, OffchainOracle__factory as OffchainOracle } from '@/artifacts';
 
 @Injectable()
 export class ProviderService {
   private readonly chainId: number;
+  private readonly rpcUrl: string;
   private readonly providers: Map<ChainId, ethers.providers.StaticJsonRpcProvider> = new Map();
 
   constructor(private configService: ConfigService) {
     this.chainId = this.configService.get<number>('base.chainId');
+    this.rpcUrl = this.configService.get('base.rpcUrl');
   }
 
   get provider() {
-    return this.getProvider(this.chainId);
+    return this.getProvider(this.chainId, this.rpcUrl);
   }
 
-  getProvider(chainId: ChainId) {
+  getProvider(chainId: ChainId, rpcUrl: string) {
     if (!this.providers.has(chainId)) {
-      this.providers.set(chainId, new ethers.providers.StaticJsonRpcProvider(RPC_LIST[chainId], chainId));
+      this.providers.set(chainId, new ethers.providers.StaticJsonRpcProvider(rpcUrl, chainId));
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -33,7 +35,8 @@ export class ProviderService {
   }
 
   getOffChainOracle() {
-    const provider = this.getProvider(ChainId.MAINNET);
+    const oracleRpcUrl = this.configService.get('base.oracleRpcUrl');
+    const provider = this.getProvider(ChainId.MAINNET, oracleRpcUrl);
     return OffchainOracle.connect(OFF_CHAIN_ORACLE, provider);
   }
 
