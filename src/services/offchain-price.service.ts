@@ -11,9 +11,11 @@ import { toWei } from '@/utilities';
 @Injectable()
 export class OffchainPriceService {
   private readonly chainId: number;
+  private readonly rpcUrl: string;
 
   constructor(private configService: ConfigService, private providerService: ProviderService) {
     this.chainId = ChainId.MAINNET;
+    this.rpcUrl = this.configService.get('base.oracleRpcUrl');
   }
 
   async getDaiEthPrice() {

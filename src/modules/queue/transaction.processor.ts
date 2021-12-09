@@ -7,8 +7,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectQueue, Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 
 import { Transaction } from '@/types';
+import { CONTRACT_ERRORS, jobStatus } from '@/constants';
 import { getToIntegerMultiplier, toWei } from '@/utilities';
-import { numbers, CONTRACT_ERRORS, jobStatus } from '@/constants';
 import { GasPriceService, ProviderService, OffchainPriceService } from '@/services';
 
 import txMangerConfig from '@/config/txManager.config';
