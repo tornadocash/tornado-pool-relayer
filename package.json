@@ -1,7 +1,7 @@
 {
-  "name": "new-relayer",
+  "name": "pool-relayer",
   "version": "0.0.1",
-  "description": "Relayer for Tornado.cash privacy solution. https://tornado.cash",
+  "description": "Relayer for Tornado.cash Nova privacy solution. https://tornado.cash",
   "author": "tornado.cash",
   "license": "MIT",
   "scripts": {
