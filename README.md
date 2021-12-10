@@ -1,18 +1,18 @@
 # Relayer for Tornado Cash [![Build Status](https://github.com/tornadocash/relayer/workflows/build/badge.svg)](https://github.com/tornadocash/relayer/actions) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/tornadocash/relayer?logo=docker&logoColor=%23FFFFFF&sort=semver)](https://hub.docker.com/repository/docker/tornadocash/relayer)
 
-## Getting listed on app.tornado.cash
+## Getting listed on nova.tornado.cash
 
 If you would like to be listed in nova.tornado.cash UI relayer's dropdown option, please do the following:
 
 1. Setup tornado.cash relayer node(see below for docker-compose.yml example)
-2. Setup ENS subdomain(`mainnet-v2.xxx.eth`) with TEXT record and URL key that points to your DNS or IP address.
+2. Setup ENS subdomain(`nova.xxx.eth`) with TEXT record and URL key that points to your DNS or IP address.
 3. Test your relayer setup at https://nova.tornado.cash by choosing custom relayer's option on withdraw/transfer tab. Enter your ens name or url and initiate an operation.
 4. Open new Github issue in https://github.com/tornadocash/tornado-pool-relayer/issues and specify the following:
 
 - your mainnet ens url
 - your telegram handle
-- withdrawal tx on mainnet
-- transfer tx on mainnet
+- withdrawal tx on mainnet and xdai
+- transfer tx on xdai
 
 Please choose your testnet relayer's fee wisely.
 
@@ -73,7 +73,7 @@ tornado.cash UI from submitting your request over http connection
     1. `bull.config.ts` bull service settings
     2. `configuration.ts` global application configuration
     2. `txManager.config.ts` txManager service settings
-- Constants: 
+- Constants:
     1. `contracts.ts` addresses of contracts and rps
     2. `variables.ts` various variables to make things easier
 - Modules:

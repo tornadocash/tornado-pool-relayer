@@ -1,10 +1,9 @@
 {
   "name": "new-relayer",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "description": "Relayer for Tornado.cash privacy solution. https://tornado.cash",
+  "author": "tornado.cash",
+  "license": "MIT",
   "scripts": {
     "compile": "typechain --target ethers-v5 --out-dir ./src/artifacts './src/abi/*.json'",
     "prebuild": "rimraf dist",
