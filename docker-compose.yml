@@ -2,7 +2,7 @@ version: '3'
 
 services:
   server:
-    image: tornadocash/relayer
+    image: tornadocash/nova-relayer
     restart: always
     command: start:prod
     env_file: .env
