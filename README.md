@@ -44,8 +44,6 @@ wget https://raw.githubusercontent.com/tornadocash/tornado-pool-relayer/master/.
    - set `CONFIRMATIONS` if needed - how many block confirmations to wait before processing an event. Not recommended to set less than 3
    - set `MAX_GAS_PRICE` if needed - maximum value of gwei value for relayer's transaction
 
-     If you want to use more than 1 eth address for relaying transactions, please add as many `workers` as you want. For example, you can comment out `worker2` in docker-compose.yml file, but please use a different `PRIVATE_KEY` for each worker.
-
 3. Run `docker-compose up -d`
 
 ## Run locally
