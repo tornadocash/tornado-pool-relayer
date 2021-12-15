@@ -47,3 +47,9 @@ export const CONTRACT_ERRORS = [
   'Invalid transaction proof',
   "Can't withdraw to zero address",
 ];
+
+export const SERVICE_ERRORS = {
+  GAS_PRICE: 'Could not get gas price',
+  TOKEN_RATES: 'Could not get token rates',
+  GAS_SPIKE: 'Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.',
+};
