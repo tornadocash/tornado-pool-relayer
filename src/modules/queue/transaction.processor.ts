@@ -7,8 +7,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectQueue, Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
 
 import { Transaction } from '@/types';
-import { CONTRACT_ERRORS, jobStatus } from '@/constants';
 import { getToIntegerMultiplier, toWei } from '@/utilities';
+import { CONTRACT_ERRORS, SERVICE_ERRORS, jobStatus } from '@/constants';
 import { GasPriceService, ProviderService, OffchainPriceService } from '@/services';
 
 import txMangerConfig from '@/config/txManager.config';
@@ -131,28 +131,38 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
   }
 
   async checkFee({ fee, externalAmount }) {
-    const { gasLimit } = this.configService.get('base');
-    const { fast } = await this.gasPriceService.getGasPrice();
+    try {
+      const { gasLimit } = this.configService.get('base');
+      const { fast } = await this.gasPriceService.getGasPrice();
 
-    const operationFee = BigNumber.from(fast).mul(gasLimit);
+      const operationFee = BigNumber.from(fast).mul(gasLimit);
 
-    const feePercent = this.getServiceFee(externalAmount);
+      const feePercent = this.getServiceFee(externalAmount);
 
-    const ethPrice = await this.offChainPriceService.getDaiEthPrice();
+      const ethPrice = await this.offChainPriceService.getDaiEthPrice();
 
-    const expense = operationFee.mul(ethPrice).div(toWei('1'));
-    const desiredFee = expense.add(feePercent);
+      const expense = operationFee.mul(ethPrice).div(toWei('1'));
+      const desiredFee = expense.add(feePercent);
 
-    if (BigNumber.from(fee).lt(desiredFee)) {
-      throw new Error('Provided fee is not enough. Probably it is a Gas Price spike, try to resubmit.');
+      if (BigNumber.from(fee).lt(desiredFee)) {
+        throw new Error(SERVICE_ERRORS.GAS_SPIKE);
+      }
+    } catch (err) {
+      this.handleError(err);
     }
   }
 
   handleError({ message }: Error) {
-    const error = CONTRACT_ERRORS.find((knownError) => message.includes(knownError));
+    const contractError = CONTRACT_ERRORS.find((knownError) => message.includes(knownError));
 
-    if (error) {
-      throw new Error(`Revert by smart contract: ${error}`);
+    if (contractError) {
+      throw new Error(`Revert by smart contract: ${contractError}`);
+    }
+
+    const serviceError = Object.values(SERVICE_ERRORS).find((knownError) => message.includes(knownError));
+
+    if (serviceError) {
+      throw new Error(`Relayer internal error: ${serviceError}`);
     }
 
     console.log('handleError:', message);
