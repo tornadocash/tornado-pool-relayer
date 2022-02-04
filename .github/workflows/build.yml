@@ -80,7 +80,6 @@ jobs:
         uses: Ilshidur/action-discord@master
         with:
           args: |
-            @Relayers
            🚀 Published a new version of the Nova relayer node service to docker hub: `tornadocash/nova-relayer:v${{ steps.vars.outputs.version }}` and `tornadocash/nova-relayer:latest`.
 
            ❗️Please update your Nova nodes ❗️
