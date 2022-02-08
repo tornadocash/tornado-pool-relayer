@@ -161,6 +161,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MIN_EXT_AMOUNT_LIMIT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "ROOT_HISTORY_SIZE",
     outputs: [
       {
@@ -613,6 +626,11 @@ const _abi = [
             name: "isL1Withdrawal",
             type: "bool",
           },
+          {
+            internalType: "uint256",
+            name: "l1Fee",
+            type: "uint256",
+          },
         ],
         internalType: "struct TornadoPool.ExtData",
         name: "_extData",
@@ -768,6 +786,11 @@ const _abi = [
             name: "isL1Withdrawal",
             type: "bool",
           },
+          {
+            internalType: "uint256",
+            name: "l1Fee",
+            type: "uint256",
+          },
         ],
         internalType: "struct TornadoPool.ExtData",
         name: "_extData",
@@ -909,6 +932,11 @@ const _abi = [
             internalType: "bool",
             name: "isL1Withdrawal",
             type: "bool",
+          },
+          {
+            internalType: "uint256",
+            name: "l1Fee",
+            type: "uint256",
           },
         ],
         internalType: "struct TornadoPool.ExtData",
