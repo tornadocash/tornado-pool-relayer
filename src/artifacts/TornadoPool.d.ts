@@ -24,6 +24,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     "FIELD_SIZE()": FunctionFragment;
     "MAX_EXT_AMOUNT()": FunctionFragment;
     "MAX_FEE()": FunctionFragment;
+    "MIN_EXT_AMOUNT_LIMIT()": FunctionFragment;
     "ROOT_HISTORY_SIZE()": FunctionFragment;
     "ZERO_VALUE()": FunctionFragment;
     "ambBridge()": FunctionFragment;
@@ -72,6 +73,10 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "MAX_FEE", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "MIN_EXT_AMOUNT_LIMIT",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "ROOT_HISTORY_SIZE",
     values?: undefined
@@ -169,6 +174,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       }
     ]
   ): string;
@@ -201,6 +207,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       }
     ]
   ): string;
@@ -229,6 +236,7 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       }
     ]
   ): string;
@@ -258,6 +266,10 @@ interface TornadoPoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "MAX_FEE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_EXT_AMOUNT_LIMIT",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "ROOT_HISTORY_SIZE",
     data: BytesLike
@@ -414,6 +426,8 @@ export class TornadoPool extends BaseContract {
 
     MAX_FEE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    MIN_EXT_AMOUNT_LIMIT(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<[number]>;
 
     ZERO_VALUE(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -514,6 +528,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -545,6 +560,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -577,6 +593,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -605,6 +622,8 @@ export class TornadoPool extends BaseContract {
   MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MIN_EXT_AMOUNT_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
 
   ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<number>;
 
@@ -700,6 +719,7 @@ export class TornadoPool extends BaseContract {
       encryptedOutput1: BytesLike;
       encryptedOutput2: BytesLike;
       isL1Withdrawal: boolean;
+      l1Fee: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -731,6 +751,7 @@ export class TornadoPool extends BaseContract {
       encryptedOutput1: BytesLike;
       encryptedOutput2: BytesLike;
       isL1Withdrawal: boolean;
+      l1Fee: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -763,6 +784,7 @@ export class TornadoPool extends BaseContract {
       encryptedOutput1: BytesLike;
       encryptedOutput2: BytesLike;
       isL1Withdrawal: boolean;
+      l1Fee: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -791,6 +813,8 @@ export class TornadoPool extends BaseContract {
     MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_EXT_AMOUNT_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
 
     ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<number>;
 
@@ -887,6 +911,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -918,6 +943,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -950,6 +976,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -999,6 +1026,8 @@ export class TornadoPool extends BaseContract {
     MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_EXT_AMOUNT_LIMIT(overrides?: CallOverrides): Promise<BigNumber>;
 
     ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1100,6 +1129,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1131,6 +1161,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1163,6 +1194,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1192,6 +1224,10 @@ export class TornadoPool extends BaseContract {
     MAX_EXT_AMOUNT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     MAX_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MIN_EXT_AMOUNT_LIMIT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     ROOT_HISTORY_SIZE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1297,6 +1333,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1328,6 +1365,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1363,6 +1401,7 @@ export class TornadoPool extends BaseContract {
         encryptedOutput1: BytesLike;
         encryptedOutput2: BytesLike;
         isL1Withdrawal: boolean;
+        l1Fee: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

@@ -37,6 +37,7 @@ const transactionSchema = {
         recipient: addressType,
         relayer: addressType,
         isL1Withdrawal: booleanType,
+        l1Fee: bytes32Type,
       },
     },
     args: {
