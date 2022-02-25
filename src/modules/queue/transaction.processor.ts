@@ -124,7 +124,8 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     if (amount.isNegative()) {
       const oneEther = getToIntegerMultiplier();
 
-      return amount.mul(toWei(serviceFee.withdrawal)).div(oneEther);
+      const share = Number(serviceFee.withdrawal) / 100;
+      return amount.mul(toWei(share.toString())).div(oneEther);
     }
 
     return serviceFee.transfer;
