@@ -18,7 +18,7 @@ jobs:
       - run: yarn install
       - run: yarn lint
       - name: Telegram Failure Notification
-        uses: appleboy/telegram-action@v0.1.1
+        uses: appleboy/telegram-action@master
         if: failure()
         with:
           message: ❗ Build failed for [${{ github.repository }}](https://github.com/${{ github.repository }}/actions) because of ${{ github.actor }}
@@ -53,7 +53,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Telegram Message Notify
-        uses: appleboy/telegram-action@v0.1.1
+        uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -61,8 +61,32 @@ jobs:
           debug: true
           format: markdown
 
+      - name: Telegram Relayer Channel Notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_RELAYER_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            🚀 Published a new version of the Nova relayer node service to docker hub: `tornadocash/nova-relayer:v${{ steps.vars.outputs.version }}` and `tornadocash/nova-relayer:latest`.
+
+            ❗️Please update your Nova nodes ❗️
+            DO NOT TOUCH MAINNET AND SIDECHAINS RELAYERS. 
+          debug: true
+          format: markdown
+
+      - name: Discord Relayer Channel Notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELAYER_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: |
+           🚀 Published a new version of the Nova relayer node service to docker hub: `tornadocash/nova-relayer:v${{ steps.vars.outputs.version }}` and `tornadocash/nova-relayer:latest`.
+
+           ❗️Please update your Nova nodes ❗️
+           DO NOT TOUCH MAINNET AND SIDECHAINS RELAYERS. 
+
       - name: Telegram Failure Notification
-        uses: appleboy/telegram-action@v0.1.1
+        uses: appleboy/telegram-action@master
         if: failure()
         with:
           message: ❗ Failed to publish [${{ steps.vars.outputs.repo_name }}](https://github.com/${{ github.repository }}/actions) because of ${{ github.actor }}
