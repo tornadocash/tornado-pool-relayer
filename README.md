@@ -1,25 +1,5 @@
 # Relayer for Tornado Cash Nova [![Build Status](https://github.com/tornadocash/tornado-pool-relayer/workflows/build/badge.svg)](https://github.com/tornadocash/tornado-pool-relayer/actions) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/tornadocash/nova-relayer?logo=docker&logoColor=%23FFFFFF&sort=semver)](https://hub.docker.com/repository/docker/tornadocash/nova-relayer)
 
-## Getting listed on nova.tornado.cash
-
-If you would like to be listed in nova.tornado.cash UI relayer's dropdown option, please do the following:
-
-1. Setup tornado.cash relayer node(see below for docker-compose.yml example)
-2. Setup ENS subdomain(`nova.xxx.eth`) with TEXT record and URL key that points to your DNS or IP address.
-3. Test your relayer setup at https://nova.tornado.cash by choosing custom relayer's option on withdraw/transfer tab. Enter your ens name or url and initiate an operation.
-4. Open new Github issue in https://github.com/tornadocash/tornado-pool-relayer/issues and specify the following:
-
-- your mainnet ens url
-- your telegram handle
-- withdrawal tx on mainnet and xdai
-- transfer tx on xdai
-
-Please choose your testnet relayer's fee wisely.
-
-Disclaimer: Please consult with legal and tax advisors regarding the compliance of running a relayer service in your jurisdiction. The authors of this project bear no responsibility.
-
-USE AT YOUR OWN RISK.
-
 ## Deploy with docker-compose
 
 docker-compose.yml contains a stack that will automatically provision SSL certificates for your domain name and will add a https redirect to port 80.
