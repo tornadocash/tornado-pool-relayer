@@ -1,16 +1,15 @@
 import { BigNumber } from 'ethers';
 import { TxManager } from 'tx-manager';
-import { Job, Queue, DoneCallback } from 'bull';
+import { DoneCallback, Job, Queue } from 'bull';
 
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectQueue, Process, Processor, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
+import { InjectQueue, OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 
 import { Transaction } from '@/types';
 import { getToIntegerMultiplier, toWei } from '@/utilities';
-import { CONTRACT_ERRORS, SERVICE_ERRORS, jobStatus } from '@/constants';
-import { GasPriceService, ProviderService, OffchainPriceService } from '@/services';
-
+import { CONTRACT_ERRORS, jobStatus, SERVICE_ERRORS } from '@/constants';
+import { GasPriceService, OffchainPriceService, ProviderService, RedisStoreService } from '@/services';
 import txMangerConfig from '@/config/txManager.config';
 
 import { BaseProcessor } from './base.processor';
@@ -24,22 +23,24 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
     private gasPriceService: GasPriceService,
     private providerService: ProviderService,
     private offChainPriceService: OffchainPriceService,
+    private redisStoreService: RedisStoreService,
   ) {
     super();
     this.queueName = 'transaction';
     this.queue = transactionQueue;
+    this.redisStoreService = redisStoreService.getClient();
   }
 
   @Process()
   async processTransactions(job: Job<Transaction>, cb: DoneCallback) {
     try {
       const { extData } = job.data;
-
       await this.checkFee({ fee: extData.fee, externalAmount: extData.extAmount });
       const txHash = await this.submitTx(job);
 
       cb(null, txHash);
     } catch (err) {
+      this.redisStoreService.addErrorToSet(err.message);
       cb(err);
     }
   }
@@ -155,13 +156,11 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
 
   handleError({ message }: Error) {
     const contractError = CONTRACT_ERRORS.find((knownError) => message.includes(knownError));
-
     if (contractError) {
       throw new Error(`Revert by smart contract: ${contractError}`);
     }
-
     const serviceError = Object.values(SERVICE_ERRORS).find((knownError) => message.includes(knownError));
-
+    this.redisStoreService.addErrorToSet(message);
     if (serviceError) {
       throw new Error(`Relayer internal error: ${serviceError}`);
     }

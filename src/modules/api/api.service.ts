@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 
-import { ProviderService } from '@/services';
+import { ProviderService, RedisStoreService } from '@/services';
 import { ConfigService } from '@nestjs/config';
 import { jobStatus, NETWORKS_INFO } from '@/constants';
 
@@ -14,8 +14,11 @@ class ApiService {
   constructor(
     private configService: ConfigService,
     private providerService: ProviderService,
+    private redisStore: RedisStoreService,
     @InjectQueue('transaction') private transactionQueue: Queue,
-  ) {}
+  ) {
+    this.redisStore = redisStore.getClient();
+  }
 
   async status(): Promise<Status> {
     const { rewardAddress, version, chainId, serviceFee } = this.configService.get('base');
@@ -58,12 +61,13 @@ class ApiService {
 
   private async healthCheck(): Promise<Health> {
     const status = await this.providerService.checkSenderBalance();
-
     const { chainId, minimumBalance } = this.configService.get('base');
+    const errorsLog = await this.redisStore.readErrors();
 
     return {
       status,
       error: status ? '' : `Not enough balance, less than ${minimumBalance} ${NETWORKS_INFO[chainId].symbol}`,
+      errorsLog,
     };
   }
 }
