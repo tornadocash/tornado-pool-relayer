@@ -1,4 +1,4 @@
-import { Controller, Body, Param, Res, Get, Post, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { ApiService } from './api.service';
@@ -9,13 +9,13 @@ export class ApiController {
   constructor(private readonly service: ApiService) {}
 
   @Get('/status')
-  async status(): Promise<Status> {
-    return await this.service.status();
+  async status(@Res() res: Response): Promise<Response<Status>> {
+    return res.json(await this.service.status());
   }
 
   @Get('/')
-  async root(): Promise<string> {
-    return this.service.root();
+  root(@Res() res: Response): Response<string> {
+    return res.send(this.service.root());
   }
 
   @Get('/job/:jobId')
@@ -25,7 +25,6 @@ export class ApiController {
     if (!job) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "The job doesn't exist" });
     }
-
     return res.json(job);
   }
 
