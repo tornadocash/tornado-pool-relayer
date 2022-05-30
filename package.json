@@ -1,6 +1,6 @@
 {
   "name": "pool-relayer",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Relayer for Tornado.cash Nova privacy solution. https://tornado.cash",
   "author": "tornado.cash",
   "license": "MIT",
@@ -33,12 +33,12 @@
     "bull": "^3.22.11",
     "class-validator": "^0.13.1",
     "ethers": "^5.4.6",
-    "gas-price-oracle": "^0.4.4",
+    "gas-price-oracle": "^0.4.7",
     "redis": "^3.1.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "tx-manager": "^0.4.5",
+    "tx-manager": "^0.4.8",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
