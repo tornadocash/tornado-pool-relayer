@@ -28,7 +28,7 @@ wget https://raw.githubusercontent.com/tornadocash/tornado-pool-relayer/master/.
 
 ## Run locally
 
-1. `npm i`
+1. `yarn`
 2. `cp .env.example .env`
 3. Modify `.env` as needed
 4. `yarn start:dev`
