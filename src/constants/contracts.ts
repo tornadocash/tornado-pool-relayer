@@ -6,7 +6,7 @@ export const CONTRACT_NETWORKS: { [chainId in ChainId]: string } = {
 
 export const RPC_LIST: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: 'https://api.mycryptoapi.com/eth',
-  [ChainId.XDAI]: 'https://rpc.xdaichain.com/tornado',
+  [ChainId.XDAI]: 'https://rpc.gnosischain.com/tornado',
 };
 
 export const OFF_CHAIN_ORACLE = '0x07D91f5fb9Bf7798734C3f606dB065549F6893bb';
