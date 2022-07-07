@@ -1,4 +1,5 @@
 type Health = {
+  errorsLog: Array<{ message: string; score: number }>;
   status: boolean;
   error: string;
 };

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
-
-import { GasPriceService, ProviderService, OffchainPriceService } from '@/services';
+import { GasPriceService, OffchainPriceService, ProviderService, RedisStoreService } from '@/services';
 
 import { TransactionProcessor } from './transaction.processor';
 
@@ -14,7 +13,7 @@ import bullConfig from '@/config/bull.config';
       useFactory: bullConfig,
     }),
   ],
-  providers: [GasPriceService, ProviderService, TransactionProcessor, OffchainPriceService],
+  providers: [GasPriceService, ProviderService, TransactionProcessor, OffchainPriceService, RedisStoreService],
   exports: [BullModule],
 })
 export class QueueModule {}
