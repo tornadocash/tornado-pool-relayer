@@ -160,7 +160,6 @@ export class TransactionProcessor extends BaseProcessor<Transaction> {
       throw new Error(`Revert by smart contract: ${contractError}`);
     }
     const serviceError = Object.values(SERVICE_ERRORS).find((knownError) => message.includes(knownError));
-    this.redisStoreService.addErrorToSet(message);
     if (serviceError) {
       throw new Error(`Relayer internal error: ${serviceError}`);
     }
